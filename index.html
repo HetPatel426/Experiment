@@ -9,75 +9,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
-  --bg:#0a0a0f;
-  --panel:rgba(10,10,20,0.78);
-  --red:#e8002d;
-  --red-dim:rgba(232,0,45,0.12);
-  --cyan:#00d4ff;
-  --white:#ffffff;
-  --muted:#55556a;
-  --border:rgba(255,255,255,0.07);
-  --hdr:56px;
-  --inp:72px;
-  --side:260px;
+  --bg:#0a0a0f;--panel:rgba(10,10,20,0.78);--red:#e8002d;--red-dim:rgba(232,0,45,0.12);
+  --cyan:#00d4ff;--white:#ffffff;--muted:#55556a;--border:rgba(255,255,255,0.07);
+  --hdr:56px;--pill:44px;--inp:72px;--side:260px;
 }
-
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--white);}
-
-/* ── CANVAS ── */
 #three-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
 
 /* ── API KEY MODAL ── */
-#api-modal{
-  position:fixed;inset:0;z-index:100;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,0.88);
-  backdrop-filter:blur(12px);
-}
-.modal-box{
-  background:rgba(12,12,24,0.97);
-  border:1px solid rgba(232,0,45,0.45);
-  border-radius:18px;
-  padding:44px 52px;
-  width:min(500px,92vw);
-  text-align:center;
-  box-shadow:0 0 80px rgba(232,0,45,0.18),0 0 160px rgba(232,0,45,0.07);
-}
+#api-modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);}
+.modal-box{background:rgba(12,12,24,0.97);border:1px solid rgba(232,0,45,0.45);border-radius:18px;padding:44px 52px;width:min(500px,92vw);text-align:center;box-shadow:0 0 80px rgba(232,0,45,0.18),0 0 160px rgba(232,0,45,0.07);}
 .modal-icon{font-size:52px;margin-bottom:18px;line-height:1;}
-.modal-title{
-  font-family:'Orbitron',sans-serif;
-  font-size:20px;font-weight:900;
-  letter-spacing:3px;color:var(--white);
-  margin-bottom:10px;
-}
+.modal-title{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:3px;color:var(--white);margin-bottom:10px;}
 .modal-sub{font-size:13px;color:var(--muted);margin-bottom:30px;line-height:1.6;}
-.api-input{
-  width:100%;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--border);
-  border-radius:9px;
-  color:var(--white);
-  font-family:'DM Sans',sans-serif;
-  font-size:14px;
-  padding:13px 16px;
-  outline:none;
-  transition:border-color .2s;
-  margin-bottom:14px;
-}
+.api-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:9px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;padding:13px 16px;outline:none;transition:border-color .2s;margin-bottom:14px;}
 .api-input:focus{border-color:rgba(232,0,45,0.6);}
 .api-input.invalid{border-color:var(--red);animation:shake .3s ease;}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.btn-primary{
-  width:100%;
-  background:var(--red);color:var(--white);
-  font-family:'Orbitron',sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:2.5px;
-  border:none;border-radius:9px;
-  padding:15px;cursor:pointer;
-  transition:opacity .2s,transform .1s;
-}
+.btn-primary{width:100%;background:var(--red);color:var(--white);font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:2.5px;border:none;border-radius:9px;padding:15px;cursor:pointer;transition:opacity .2s,transform .1s;}
 .btn-primary:hover{opacity:.87;}
 .btn-primary:active{transform:scale(.98);}
 .modal-note{font-size:11px;color:var(--muted);margin-top:18px;line-height:1.5;}
@@ -88,188 +38,91 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 #app{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;}
 
 /* ── HEADER ── */
-#topbar{
-  height:var(--hdr);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;
-  background:var(--panel);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(20px);
-  flex-shrink:0;
-}
+#topbar{height:var(--hdr);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--panel);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);flex-shrink:0;}
 .topbar-left{display:flex;align-items:center;gap:10px;}
 .topbar-logo{font-size:22px;}
-.topbar-title{
-  font-family:'Orbitron',sans-serif;
-  font-size:13px;font-weight:900;letter-spacing:2.5px;
-  color:var(--white);
-}
-.topbar-right{display:flex;align-items:center;gap:14px;}
-.live-badge{
-  font-family:'Orbitron',sans-serif;
-  font-size:9px;font-weight:700;letter-spacing:1px;
-  color:var(--cyan);
-  animation:pulse-cyan 2.2s ease-in-out infinite;
-}
-@keyframes pulse-cyan{
-  0%,100%{opacity:1;text-shadow:0 0 10px var(--cyan);}
-  50%{opacity:.45;text-shadow:none;}
-}
-.btn-outline{
-  background:transparent;
-  border:1px solid var(--red);color:var(--red);
-  font-family:'Orbitron',sans-serif;
-  font-size:9px;font-weight:700;letter-spacing:1.5px;
-  padding:7px 14px;border-radius:6px;
-  cursor:pointer;transition:background .2s,color .2s;
-}
+.topbar-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;letter-spacing:2.5px;color:var(--white);}
+.topbar-right{display:flex;align-items:center;gap:10px;position:relative;}
+.live-badge{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--cyan);animation:pulse-cyan 2.2s ease-in-out infinite;}
+@keyframes pulse-cyan{0%,100%{opacity:1;text-shadow:0 0 10px var(--cyan);}50%{opacity:.45;text-shadow:none;}}
+.btn-outline{background:transparent;border:1px solid var(--red);color:var(--red);font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:7px 14px;border-radius:6px;cursor:pointer;transition:background .2s,color .2s;}
 .btn-outline:hover{background:var(--red);color:var(--white);}
+
+/* ── PILL BAR (track selector) ── */
+#pill-wrap{height:var(--pill);flex-shrink:0;position:relative;background:rgba(8,8,18,0.88);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);overflow:hidden;}
+#pill-wrap::before,#pill-wrap::after{content:'';position:absolute;top:0;bottom:0;width:36px;z-index:2;pointer-events:none;}
+#pill-wrap::before{left:0;background:linear-gradient(to right,rgba(8,8,18,0.95),transparent);}
+#pill-wrap::after{right:0;background:linear-gradient(to left,rgba(8,8,18,0.95),transparent);}
+#pill-bar{display:flex;align-items:center;gap:8px;padding:0 18px;height:100%;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;}
+#pill-bar::-webkit-scrollbar{display:none;}
+.track-pill{flex-shrink:0;cursor:pointer;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:10px;color:rgba(255,255,255,0.65);font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:0.8px;white-space:nowrap;transition:border-color .2s,color .2s,box-shadow .2s;}
+.track-pill:hover{color:var(--white);border-color:rgba(232,0,45,0.5);}
+.track-pill.active{border-color:var(--red);color:var(--white);box-shadow:0 0 12px rgba(232,0,45,0.35);background:var(--red-dim);}
+.pill-flag{font-size:12px;margin-right:3px;}
+.pill-round{font-size:7.5px;color:var(--red);opacity:.8;margin-left:4px;}
 
 /* ── LAYOUT ── */
 #layout{flex:1;display:flex;overflow:hidden;}
 
 /* ── SIDEBAR ── */
-#sidebar{
-  width:var(--side);flex-shrink:0;
-  background:var(--panel);
-  border-right:1px solid var(--border);
-  backdrop-filter:blur(20px);
-  overflow-y:auto;overflow-x:hidden;
-}
+#sidebar{width:var(--side);flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);backdrop-filter:blur(20px);overflow-y:auto;overflow-x:hidden;}
 #sidebar::-webkit-scrollbar{width:3px;}
 #sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.09);border-radius:2px;}
 .sidebar-section{padding:14px 0;}
 .sidebar-section+.sidebar-section{border-top:1px solid var(--border);}
-.sidebar-hdr{
-  font-family:'Orbitron',sans-serif;
-  font-size:8.5px;font-weight:700;letter-spacing:2px;
-  color:var(--muted);padding:0 16px 10px;
-}
-.sidebar-item{
-  display:flex;align-items:center;gap:9px;
-  padding:7px 16px;cursor:pointer;
-  transition:background .15s;
-  font-size:12px;color:rgba(255,255,255,0.72);
-  line-height:1.35;
-}
+.sidebar-hdr{font-family:'Orbitron',sans-serif;font-size:8.5px;font-weight:700;letter-spacing:2px;color:var(--muted);padding:0 16px 10px;}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:7px 16px;cursor:pointer;transition:background .15s;font-size:12px;color:rgba(255,255,255,0.72);line-height:1.35;}
 .sidebar-item:hover{background:rgba(255,255,255,0.04);color:var(--white);}
-.sidebar-item.active{
-  background:var(--red-dim);color:var(--white);
-  border-right:2px solid var(--red);
-}
+.sidebar-item.active{background:var(--red-dim);color:var(--white);border-right:2px solid var(--red);}
 .team-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.race-code{
-  font-family:'Orbitron',sans-serif;
-  font-size:8.5px;color:var(--muted);width:24px;flex-shrink:0;
-}
-.q-num{
-  font-family:'Orbitron',sans-serif;
-  font-size:8.5px;font-weight:700;color:var(--red);
-  width:20px;flex-shrink:0;
-}
+.race-code{font-family:'Orbitron',sans-serif;font-size:8.5px;color:var(--muted);width:24px;flex-shrink:0;}
+.q-num{font-family:'Orbitron',sans-serif;font-size:8.5px;font-weight:700;color:var(--red);width:20px;flex-shrink:0;}
 
 /* ── CHAT AREA ── */
 #chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-#messages{
-  flex:1;overflow-y:auto;
-  padding:24px;
-  display:flex;flex-direction:column;gap:18px;
-}
+#messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:18px;}
 #messages::-webkit-scrollbar{width:3px;}
 #messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.09);border-radius:2px;}
-
-/* Welcome */
-.welcome{
-  align-self:center;
-  background:rgba(12,12,26,0.7);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:14px;
-  padding:24px 32px;
-  text-align:center;max-width:540px;margin:auto;
-}
-.welcome h2{
-  font-family:'Orbitron',sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:2px;
-  color:var(--red);margin-bottom:10px;
-}
+.welcome{align-self:center;background:rgba(12,12,26,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:24px 32px;text-align:center;max-width:540px;margin:auto;}
+.welcome h2{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--red);margin-bottom:10px;}
 .welcome p{font-size:13px;color:rgba(255,255,255,0.58);line-height:1.65;}
 .welcome strong{color:rgba(255,255,255,0.85);}
-
-/* Bubbles */
 .msg-wrap{display:flex;flex-direction:column;}
 .msg-wrap.user{align-items:flex-end;}
 .msg-wrap.ai{align-items:flex-start;}
-.msg-label{
-  font-family:'Orbitron',sans-serif;
-  font-size:8px;font-weight:700;letter-spacing:1.5px;
-  margin-bottom:5px;color:var(--muted);
-}
+.msg-label{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1.5px;margin-bottom:5px;color:var(--muted);}
 .msg-label.ai{color:rgba(0,212,255,0.65);}
-.msg-bubble{
-  max-width:78%;
-  font-size:13.5px;line-height:1.68;
-  white-space:pre-wrap;word-break:break-word;
-}
-.msg-bubble.user{
-  background:rgba(90,8,18,0.65);
-  border:1px solid rgba(232,0,45,0.28);
-  border-radius:16px 16px 4px 16px;
-  padding:12px 16px;
-  color:rgba(255,255,255,0.9);
-  max-width:68%;
-}
-.msg-bubble.ai{
-  background:rgba(12,12,28,0.85);
-  border:1px solid var(--border);
-  border-left:3px solid var(--red);
-  border-radius:4px 16px 16px 16px;
-  padding:14px 18px;
-  color:rgba(255,255,255,0.87);
-  box-shadow:0 0 24px rgba(0,212,255,0.05);
-  max-width:88%;
-}
-.msg-bubble.ai.streaming::after{
-  content:'▋';display:inline;
-  color:var(--cyan);
-  animation:blink .75s step-end infinite;
-}
+.msg-bubble{max-width:78%;font-size:13.5px;line-height:1.68;white-space:pre-wrap;word-break:break-word;}
+.msg-bubble.user{background:rgba(90,8,18,0.65);border:1px solid rgba(232,0,45,0.28);border-radius:16px 16px 4px 16px;padding:12px 16px;color:rgba(255,255,255,0.9);max-width:68%;}
+.msg-bubble.ai{background:rgba(12,12,28,0.85);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:4px 16px 16px 16px;padding:14px 18px;color:rgba(255,255,255,0.87);box-shadow:0 0 24px rgba(0,212,255,0.05);max-width:88%;}
+.msg-bubble.ai.streaming::after{content:'▋';display:inline;color:var(--cyan);animation:blink .75s step-end infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* ── INPUT BAR ── */
-#input-bar{
-  height:var(--inp);
-  display:flex;align-items:center;gap:12px;
-  padding:0 20px;
-  background:var(--panel);
-  border-top:1px solid var(--border);
-  backdrop-filter:blur(20px);
-  flex-shrink:0;
-}
-#chat-input{
-  flex:1;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--border);
-  border-radius:10px;
-  color:var(--white);
-  font-family:'DM Sans',sans-serif;
-  font-size:14px;
-  padding:14px 18px;
-  outline:none;
-  transition:border-color .2s;
-}
+#input-bar{height:var(--inp);display:flex;align-items:center;gap:12px;padding:0 20px;background:var(--panel);border-top:1px solid var(--border);backdrop-filter:blur(20px);flex-shrink:0;}
+#chat-input{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;padding:14px 18px;outline:none;transition:border-color .2s;}
 #chat-input:focus{border-color:rgba(232,0,45,0.45);}
 #chat-input::placeholder{color:var(--muted);}
 #chat-input:disabled{opacity:.45;}
-.btn-ask{
-  background:var(--red);color:var(--white);
-  font-family:'Orbitron',sans-serif;
-  font-size:10px;font-weight:700;letter-spacing:1.5px;
-  border:none;border-radius:10px;
-  padding:14px 22px;cursor:pointer;
-  transition:opacity .2s;white-space:nowrap;flex-shrink:0;
-}
+.btn-ask{background:var(--red);color:var(--white);font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;border:none;border-radius:10px;padding:14px 22px;cursor:pointer;transition:opacity .2s;white-space:nowrap;flex-shrink:0;}
 .btn-ask:hover:not(:disabled){opacity:.85;}
 .btn-ask:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ── CAMERA BUTTONS (fixed overlay) ── */
+#cam-btns{position:fixed;bottom:calc(var(--inp) + 14px);right:16px;z-index:2;display:none;flex-direction:column;gap:5px;}
+#cam-btns.visible{display:flex;}
+.cam-btn{background:rgba(10,10,22,0.86);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:rgba(255,255,255,0.55);font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1.5px;padding:7px 11px;cursor:pointer;backdrop-filter:blur(12px);transition:border-color .2s,color .2s,box-shadow .2s;min-width:60px;text-align:center;}
+.cam-btn:hover{border-color:rgba(232,0,45,0.55);color:var(--white);}
+.cam-btn.active{border-color:var(--red);color:var(--white);box-shadow:0 0 10px rgba(232,0,45,0.35);background:rgba(232,0,45,0.12);}
+
+/* ── SETTINGS DROPDOWN ── */
+#settings-dd{position:fixed;top:calc(var(--hdr) + 6px);right:16px;z-index:50;display:none;background:rgba(10,10,22,0.97);border:1px solid rgba(232,0,45,0.28);border-radius:12px;padding:18px 20px;min-width:260px;backdrop-filter:blur(20px);box-shadow:0 8px 40px rgba(0,0,0,0.55),0 0 40px rgba(232,0,45,0.07);}
+#settings-dd.open{display:block;}
+.settings-title{font-family:'Orbitron',sans-serif;font-size:8.5px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:12px;}
+.settings-key{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:7px;padding:9px 12px;margin-bottom:12px;letter-spacing:1px;word-break:break-all;}
+.settings-divider{height:1px;background:var(--border);margin:12px 0;}
+.settings-action{display:block;width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:7px;color:rgba(255,255,255,0.72);font-family:'DM Sans',sans-serif;font-size:12px;padding:9px 12px;cursor:pointer;text-align:left;transition:background .15s,border-color .15s;margin-bottom:7px;}
+.settings-action:hover{background:rgba(232,0,45,0.12);border-color:rgba(232,0,45,0.35);color:var(--white);}
 
 /* ── RESPONSIVE ── */
 @media(max-width:620px){
@@ -284,6 +137,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 
 <canvas id="three-canvas"></canvas>
 
+<!-- Camera mode buttons (floating over canvas) -->
+<div id="cam-btns">
+  <button class="cam-btn active" data-mode="orbit">ORBIT</button>
+  <button class="cam-btn" data-mode="top">TOP</button>
+  <button class="cam-btn" data-mode="chase">CHASE</button>
+</div>
+
+<!-- Settings dropdown -->
+<div id="settings-dd">
+  <div class="settings-title">API SETTINGS</div>
+  <div class="settings-key" id="key-display">—</div>
+  <div class="settings-divider"></div>
+  <button class="settings-action" id="change-key-btn">🔑 Change API Key</button>
+  <button class="settings-action" id="clear-key-btn">✕ Clear Key &amp; Reset</button>
+</div>
+
 <!-- API Key Modal -->
 <div id="api-modal">
   <div class="modal-box">
@@ -292,7 +161,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
     <p class="modal-sub">Powered by Claude AI · Enter your Anthropic API key to start predicting the 2026 season</p>
     <input type="password" id="api-key-input" class="api-input" placeholder="sk-ant-api03-...">
     <button id="api-key-btn" class="btn-primary">START ENGINE</button>
-    <p class="modal-note">Your key is stored in sessionStorage only · Never sent anywhere except api.anthropic.com</p>
+    <p class="modal-note">Your key is stored in localStorage only · Never sent anywhere except api.anthropic.com</p>
     <a href="https://console.anthropic.com" target="_blank" class="modal-link">Get a free API key →</a>
   </div>
 </div>
@@ -307,8 +176,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
     <div class="topbar-right">
       <span class="live-badge">● LIVE</span>
       <button id="new-chat-btn" class="btn-outline">NEW CHAT</button>
+      <button id="settings-btn" class="btn-outline" style="padding:7px 10px;">⚙</button>
     </div>
   </header>
+
+  <div id="pill-wrap">
+    <div id="pill-bar"></div>
+  </div>
 
   <div id="layout">
     <aside id="sidebar">
@@ -325,7 +199,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
         <div id="race-list"></div>
       </div>
     </aside>
-
     <main id="chat-main">
       <div id="messages"></div>
     </main>
@@ -385,245 +258,515 @@ Championship: 1. Lando Norris (McLaren) 436pts — 2025 World Champion, 2. Max V
 
 2026 REGULATION RESET:
 - Completely new power units: ~50/50 ICE/electric split, new manufacturers including Audi debut and Ford/Honda for Red Bull
-- Active aerodynamics replace DRS: "Overtake Mode" activated within 1 second of the car ahead, Active Aero on front and rear wings
+- Active aerodynamics replace DRS: "Overtake Mode" activated within 1 second of the car ahead
 - 24 races from Australia (March 8) to Abu Dhabi (December 6)
-- New Madrid street circuit replaces Imola. 6 Sprint weekends: China, Miami, Canada, Britain, Netherlands, Singapore
+- New Madrid street circuit. 6 Sprint weekends: China, Miami, Canada, Britain, Netherlands, Singapore
 - Cost cap raised to $215M. Three pre-season tests (Barcelona Jan, Bahrain Feb x2)
-- Regulation reset means 2025 competitiveness is unreliable predictor of 2026 performance
 
 2026 DRIVER LINEUPS:
-- McLaren: Lando Norris (reigning WDC, #4), Oscar Piastri (#81) — Mercedes power
-- Mercedes: George Russell (#63), Kimi Antonelli (#12, 18yo stepping up from F2) — bookies favour Russell for WDC
+- McLaren: Lando Norris (#4), Oscar Piastri (#81) — Mercedes power
+- Mercedes: George Russell (#63), Kimi Antonelli (#12, 18yo rookie) — bookies favour Russell for WDC
 - Red Bull: Max Verstappen (#1), Isack Hadjar (#6, F2 champion rookie) — Ford/Honda power
-- Ferrari: Charles Leclerc (#16), Lewis Hamilton (#44, blockbuster move from Mercedes) — strong preseason pace
+- Ferrari: Charles Leclerc (#16), Lewis Hamilton (#44, blockbuster move) — strong preseason pace
 - Williams: Carlos Sainz (#55), Alex Albon (#23) — Mercedes customer power
 - Racing Bulls: Liam Lawson (#30), Arvid Lindblad (#43, 18yo — youngest on the grid) — Honda power
-- Aston Martin: Fernando Alonso (#14), Lance Stroll (#18) — Adrian Newey's first full season as technical lead; biggest wildcard
+- Aston Martin: Fernando Alonso (#14), Lance Stroll (#18) — Adrian Newey's first full season as technical lead
 - Haas: Esteban Ocon (#31), Oliver Bearman (#87) — Ferrari power
-- Audi: Nico Hülkenberg (#27), Gabriel Bortoleto (#5, 2024 F2 champion) — new Audi power unit, completely unproven in racing
+- Audi: Nico Hülkenberg (#27), Gabriel Bortoleto (#5) — new Audi power unit, completely unproven
 - Alpine: Pierre Gasly (#10), Jack Doohan (#7) — Mercedes customer power
-- Cadillac: Sergio Pérez (#11), Valtteri Bottas (#77) — brand new 11th team, Ferrari power, first new constructor since Haas 2016
+- Cadillac: Sergio Pérez (#11), Valtteri Bottas (#77) — brand new 11th team, Ferrari power
 
 PRESEASON TESTING:
-- Lewis Hamilton set fastest time at Barcelona private test (Jan 26–30); Ferrari and Mercedes engines looked strong
+- Lewis Hamilton set fastest time at Barcelona (Jan 26–30); Ferrari and Mercedes engines looked strong
 - Kimi Antonelli topped Bahrain Test 1 (Feb 11–13); Mercedes overall impressive
 - Red Bull Ford/Honda integration still being optimised; some reliability concerns
-- Audi power unit drew reliability concern in testing; Cadillac completed solid mileage but ultimate pace unclear
+- Audi power unit drew reliability concerns; Cadillac completed solid mileage
 
 KEY 2026 STORYLINES:
 - Norris defending his first title against a highly motivated Verstappen
-- Hamilton at Ferrari — the dream partnership, can he win a record 8th world title?
-- Adrian Newey's Aston Martin: could be the biggest wildcard or the biggest disappointment
+- Hamilton at Ferrari — can he win a record 8th world title?
+- Adrian Newey's Aston Martin: biggest wildcard or biggest disappointment?
 - Cadillac as 11th constructor: first new team since Haas in 2016
-- Audi's completely race-unproven power unit is a major reliability question mark
+- Audi's completely race-unproven power unit is a major reliability question
 - Active Aero fundamentally changes overtaking dynamics and race strategy
-- Three genuine rookies promoted simultaneously: Antonelli (Mercedes), Hadjar (Red Bull), Lindblad (Racing Bulls)
+- Three genuine rookies promoted simultaneously: Antonelli, Hadjar, Lindblad
 
-Provide detailed, analytical predictions with clear reasoning. Be specific about performance expectations, reliability risks, and strategic factors. Use F1 terminology. Acknowledge genuine uncertainty. Keep responses to around 200–350 words. Prefer plain text over heavy markdown — use dashes for lists when helpful.`;
+Provide detailed, analytical predictions with clear reasoning. Be specific about performance expectations, reliability risks, and strategic factors. Use F1 terminology. Acknowledge genuine uncertainty. Keep responses to around 200–350 words. Prefer plain text — use dashes for lists when helpful.`;
+
+// ═══════════════════════════════════════════════════════════════
+//  CIRCUITS — 24 REAL F1 TRACKS
+// ═══════════════════════════════════════════════════════════════
+// Points are in XZ plane (Y=elevation). Normalised to ~±28 units.
+const CIRCUITS = [
+  { id:'australia', name:'Australia', flag:'🇦🇺', round:'R1',
+    pts:[[-22,12],[-10,14],[0,16],[10,14],[18,10],[22,4],[22,-2],[18,-8],[14,-14],[10,-16],[6,-14],[2,-18],[-2,-20],[-6,-18],[-12,-14],[-18,-8],[-24,-2],[-28,4],[-26,10]],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[{t:0.05,label:'T1'},{t:0.22,label:'T4'},{t:0.42,label:'T8'},{t:0.72,label:'T11'}] },
+
+  { id:'china', name:'China', flag:'🇨🇳', round:'R2',
+    pts:[[-24,-4],[-14,-4],[-4,-4],[4,0],[8,8],[4,14],[-4,18],[-12,22],[-20,20],[-26,14],[-22,8],[-10,4],[0,2],[6,-2],[4,-8],[-4,-12],[-14,-12],[-22,-8]],
+    camTop:[0,60,0.01], camOrbit:{r:66,h:38}, startT:0.0,
+    corners:[{t:0.08,label:'T1'},{t:0.18,label:'Snail'},{t:0.45,label:'T6'},{t:0.78,label:'T11'}] },
+
+  { id:'japan', name:'Japan', flag:'🇯🇵', round:'R3',
+    pts:[[0,12],[8,10],[16,6],[22,0],[24,-6],[22,-12],[16,-14],[8,-14],[2,-16],[-4,-14],[-10,-10],[-16,-4],[-18,4],[-14,12],[-6,18],[2,20],[6,17],[8,14],[6,10],[0,6],[-6,2],[-10,-2],[-6,-6],[0,-4],[4,0],[2,6]],
+    elev:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    overpassIdx:[16,17,18], // indices for overpass points (elevated)
+    camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
+    corners:[{t:0.06,label:'T1'},{t:0.18,label:'Degner'},{t:0.30,label:'Hairpin'},{t:0.42,label:'Spoon'},{t:0.56,label:'130R'},{t:0.62,label:'Casio'},{t:0.75,label:'★'}] },
+
+  { id:'bahrain', name:'Bahrain', flag:'🇧🇭', round:'R4',
+    pts:[[-24,0],[-12,0],[0,0],[8,-4],[12,-10],[10,-16],[6,-20],[0,-18],[-6,-14],[-10,-8],[-10,0],[-6,6],[0,10],[6,14],[10,18],[6,22],[-4,24],[-14,20],[-20,14],[-24,8]],
+    camTop:[0,58,0.01], camOrbit:{r:62,h:36}, startT:0.0,
+    corners:[{t:0.08,label:'T1'},{t:0.28,label:'T4'},{t:0.65,label:'T10'}] },
+
+  { id:'saudi', name:'Saudi Arabia', flag:'🇸🇦', round:'R5',
+    pts:[[-28,10],[-28,0],[-28,-10],[-24,-16],[-16,-20],[-4,-22],[8,-20],[16,-14],[20,-6],[22,4],[18,12],[10,18],[4,20],[-4,22],[-12,20],[-18,16],[-22,14]],
+    camTop:[0,65,0.01], camOrbit:{r:70,h:40}, startT:0.0,
+    corners:[{t:0.08,label:'T1'},{t:0.45,label:'T7'},{t:0.80,label:'T13'}] },
+
+  { id:'miami', name:'Miami', flag:'🇺🇸', round:'R6',
+    pts:[[-20,-8],[-8,-8],[4,-8],[12,-12],[18,-16],[18,-22],[12,-26],[4,-24],[-6,-20],[-12,-14],[-16,-6],[-14,2],[-8,8],[-2,12],[6,10],[14,6],[20,0],[18,-4],[8,-6]],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[{t:0.12,label:'T1'},{t:0.28,label:'T4'},{t:0.55,label:'T11'},{t:0.65,label:'T12'},{t:0.80,label:'T15'}] },
+
+  { id:'canada', name:'Canada', flag:'🇨🇦', round:'R7',
+    pts:[[-22,6],[-10,8],[2,8],[10,4],[14,-2],[16,-10],[12,-18],[4,-24],[-4,-26],[-10,-22],[-14,-14],[-14,-6],[-10,-2],[-4,2],[2,4],[-2,10],[-8,14],[-16,12],[-22,8]],
+    camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
+    corners:[{t:0.10,label:'T1'},{t:0.35,label:'T6'},{t:0.55,label:'T8'},{t:0.72,label:'Wall'}] },
+
+  { id:'monaco', name:'Monaco', flag:'🇲🇨', round:'R8',
+    pts:[[-20,0],[-14,2],[-6,4],[2,2],[6,-2],[8,-8],[6,-14],[2,-18],[-4,-20],[-8,-22],[-10,-26],[-12,-28],[-12,-24],[-14,-24],[-15,-20],[-16,-14],[-17,-8],[-18,-2],[-18,6],[-14,9],[-8,10],[-3,8],[2,8],[8,10],[14,12],[16,6],[12,0],[4,-2],[-4,0],[-12,2]],
+    camTop:[0,54,0.01], camOrbit:{r:60,h:34}, startT:0.0,
+    corners:[{t:0.08,label:'STE DEV'},{t:0.20,label:'Casino'},{t:0.32,label:'Loews'},{t:0.44,label:'Portier'},{t:0.52,label:'Tunnel'},{t:0.62,label:'Tabac'},{t:0.72,label:'Pool'},{t:0.84,label:'Rascasse'}] },
+
+  { id:'spain', name:'Spain', flag:'🇪🇸', round:'R9',
+    pts:[[-24,-2],[-10,-2],[2,-2],[10,-6],[14,-12],[10,-18],[4,-22],[-4,-24],[-12,-22],[-18,-16],[-22,-8],[-20,0],[-16,6],[-10,8],[-4,10],[4,14],[10,18],[12,12],[10,6],[4,2]],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[{t:0.08,label:'T1'},{t:0.18,label:'Esses'},{t:0.60,label:'T10'},{t:0.80,label:'T14'}] },
+
+  { id:'austria', name:'Austria', flag:'🇦🇹', round:'R10',
+    pts:[[-10,-4],[0,-4],[8,-4],[14,-8],[18,-14],[16,-20],[8,-22],[-2,-22],[-10,-18],[-14,-10],[-14,-2],[-12,4],[-6,6],[0,2]],
+    camTop:[0,50,0.01], camOrbit:{r:54,h:32}, startT:0.0,
+    corners:[{t:0.15,label:'T1'},{t:0.30,label:'T2'},{t:0.50,label:'T3'},{t:0.75,label:'T7'}] },
+
+  { id:'britain', name:'Britain', flag:'🇬🇧', round:'R11',
+    pts:[[-14,-10],[-4,-12],[6,-12],[14,-8],[20,0],[22,8],[18,14],[12,18],[4,22],[-6,24],[-16,22],[-22,16],[-24,8],[-22,0],[-18,-8]],
+    camTop:[0,60,0.01], camOrbit:{r:66,h:38}, startT:0.0,
+    corners:[{t:0.05,label:'Copse'},{t:0.18,label:'Maggots'},{t:0.28,label:'Becketts'},{t:0.38,label:'Chapel'},{t:0.60,label:'Stowe'},{t:0.78,label:'Club'}] },
+
+  { id:'belgium', name:'Belgium', flag:'🇧🇪', round:'R12',
+    pts:[[-16,-6],[-8,-6],[0,-4],[6,0],[4,6],[0,12],[-4,18],[-8,22],[-16,24],[-22,20],[-26,14],[-24,8],[-18,4],[-12,0],[-6,-4],[2,-8],[8,-12],[4,-16],[-4,-14],[-10,-10]],
+    elev:[0,0,0,0,0,0.5,1.0,1.5,1.5,1.2,0.8,0.4,0,0,0,0,0,0,0,0],
+    camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
+    corners:[{t:0.08,label:'La Source'},{t:0.18,label:'Eau Rouge'},{t:0.24,label:'Raidillon'},{t:0.40,label:'Les Combes'},{t:0.58,label:'Pouhon'},{t:0.78,label:'Bus Stop'}] },
+
+  { id:'hungary', name:'Hungary', flag:'🇭🇺', round:'R13',
+    pts:[[-18,-4],[-8,-4],[2,-4],[8,-8],[12,-14],[8,-20],[0,-24],[-8,-22],[-14,-16],[-16,-8],[-14,0],[-10,8],[-4,14],[4,18],[10,16],[14,10],[12,4],[6,0],[0,-2]],
+    camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
+    corners:[{t:0.06,label:'T1'},{t:0.18,label:'T2'},{t:0.42,label:'T5'},{t:0.72,label:'T11'}] },
+
+  { id:'netherlands', name:'Netherlands', flag:'🇳🇱', round:'R14',
+    pts:[[-12,-2],[-2,-2],[6,-2],[12,-6],[16,-12],[14,-18],[8,-22],[0,-26],[-8,-24],[-16,-18],[-20,-10],[-20,0],[-16,8],[-10,12],[-2,14],[6,12],[12,6],[10,0],[4,-2]],
+    camTop:[0,54,0.01], camOrbit:{r:60,h:34}, startT:0.0,
+    corners:[{t:0.08,label:'Tarzan'},{t:0.20,label:'Hugenholtz'},{t:0.50,label:'Scheivlak'},{t:0.80,label:'T14'}] },
+
+  { id:'italy', name:'Italy', flag:'🇮🇹', round:'R15',
+    pts:[[-20,-10],[-8,-10],[8,-10],[14,-14],[14,-18],[8,-20],[16,-22],[22,-16],[24,-8],[22,-2],[18,2],[14,0],[8,4],[2,10],[-4,16],[-10,20],[-16,18],[-20,12],[-24,4],[-22,-4],[-16,-8],[-10,-12]],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[{t:0.08,label:'Rettifilo'},{t:0.20,label:'Curva Grande'},{t:0.28,label:'Roggia'},{t:0.45,label:'Lesmo'},{t:0.70,label:'Ascari'},{t:0.88,label:'Parabolica'}] },
+
+  { id:'azerbaijan', name:'Azerbaijan', flag:'🇦🇿', round:'R16',
+    pts:[[-28,8],[-28,0],[-28,-10],[-26,-18],[-20,-22],[-12,-24],[-4,-26],[4,-28],[10,-24],[14,-18],[16,-10],[14,-2],[8,4],[2,8],[-4,10],[-10,12],[-18,12],[-24,10]],
+    camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
+    corners:[{t:0.30,label:'T1'},{t:0.45,label:'Castle'},{t:0.55,label:'T7'}] },
+
+  { id:'singapore', name:'Singapore', flag:'🇸🇬', round:'R17',
+    pts:[[-18,4],[-6,6],[2,10],[8,6],[12,0],[14,-8],[10,-14],[4,-18],[-4,-22],[-12,-24],[-18,-20],[-22,-14],[-20,-6],[-14,0],[-8,4]],
+    camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
+    corners:[{t:0.08,label:'T1'},{t:0.28,label:'T5'},{t:0.55,label:'T9'},{t:0.62,label:'T10'}] },
+
+  { id:'usa', name:'USA (Austin)', flag:'🇺🇸', round:'R18',
+    pts:[[-22,-4],[-10,-4],[0,-4],[8,-8],[14,-12],[18,-16],[22,-22],[18,-26],[12,-24],[6,-20],[0,-18],[-6,-22],[-12,-26],[-16,-22],[-18,-16],[-14,-10],[-10,-4],[-4,2],[4,8],[10,12],[16,10],[18,4],[14,-2]],
+    elev:[0,0,0,1,2.5,4,4,3,1.5,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    camTop:[0,60,0.01], camOrbit:{r:66,h:38}, startT:0.0,
+    corners:[{t:0.06,label:'T1 ▲'},{t:0.18,label:'Esses'},{t:0.45,label:'T11'},{t:0.80,label:'T19'}] },
+
+  { id:'mexico', name:'Mexico', flag:'🇲🇽', round:'R19',
+    pts:[[-20,-2],[-8,-2],[4,-2],[12,-6],[18,-12],[22,-18],[20,-24],[12,-26],[4,-24],[-4,-20],[-10,-14],[-14,-6],[-14,4],[-10,12],[-4,18],[6,20],[14,16],[18,8],[14,0]],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[{t:0.08,label:'T1'},{t:0.30,label:'T5'},{t:0.50,label:'Stadium'},{t:0.82,label:'Peraltada'}] },
+
+  { id:'brazil', name:'Brazil', flag:'🇧🇷', round:'R20',
+    pts:[[16,-4],[6,-4],[-4,-4],[-10,-8],[-12,-14],[-8,-20],[0,-24],[8,-22],[14,-16],[18,-8],[16,0],[10,8],[4,14],[-4,16],[-10,12],[-14,6],[-12,0],[-4,-2],[6,-4]],
+    camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
+    corners:[{t:0.08,label:'Senna S'},{t:0.25,label:'Curva Sol'},{t:0.45,label:'Ferradura'},{t:0.62,label:'Juncao'}] },
+
+  { id:'lasvegas', name:'Las Vegas', flag:'🇺🇸', round:'R21',
+    pts:[[-26,4],[-26,-6],[-26,-14],[-22,-20],[-16,-24],[-10,-22],[-2,-22],[8,-22],[18,-22],[24,-16],[22,-8],[16,0],[8,6],[2,10],[-6,10],[-14,8],[-20,6],[-24,4]],
+    camTop:[0,60,0.01], camOrbit:{r:66,h:38}, startT:0.0,
+    corners:[{t:0.15,label:'T1'},{t:0.40,label:'T5'},{t:0.62,label:'T11'},{t:0.80,label:'T14'}] },
+
+  { id:'qatar', name:'Qatar', flag:'🇶🇦', round:'R22',
+    pts:[[-22,0],[-10,0],[2,0],[10,-6],[16,-12],[20,-18],[18,-24],[10,-26],[0,-24],[-8,-22],[-14,-16],[-18,-8],[-18,2],[-14,8],[-8,12],[-2,14],[6,10],[8,4]],
+    camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
+    corners:[{t:0.08,label:'T1'},{t:0.28,label:'T4'},{t:0.55,label:'T8'},{t:0.80,label:'T14'}] },
+
+  { id:'madrid', name:'Madrid', flag:'🇪🇸', round:'R23',
+    pts:[[-24,-2],[-12,-2],[0,-2],[8,-6],[14,-12],[18,-18],[16,-24],[8,-26],[0,-24],[-8,-20],[-14,-14],[-16,-6],[-14,2],[-8,8],[0,10],[8,8],[14,2],[12,-4],[6,-6],[-2,-4]],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[{t:0.08,label:'T1'},{t:0.28,label:'T4'},{t:0.50,label:'T7'},{t:0.65,label:'Stadium'}] },
+
+  { id:'abudhabi', name:'Abu Dhabi', flag:'🇦🇪', round:'R24',
+    pts:[[-22,0],[-10,0],[0,0],[8,-4],[14,-10],[18,-16],[16,-22],[8,-26],[0,-28],[-8,-26],[-14,-20],[-18,-12],[-20,-4],[-18,4],[-14,10],[-8,14],[0,16],[8,14],[14,8],[12,2]],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[{t:0.06,label:'T1'},{t:0.28,label:'T4'},{t:0.50,label:'Marina'},{t:0.65,label:'Hotel'},{t:0.82,label:'T17'}] },
+];
 
 // ═══════════════════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════════════════
-let apiKey = sessionStorage.getItem('f1_api_key') || '';
-let conversation = [];
-let isStreaming = false;
-let activeItem = null;
+let apiKey        = localStorage.getItem('f1_api_key') || '';
+let conversation  = [];
+let isStreaming   = false;
+let activeItem    = null;
+
+// Three.js module-level references (set by initThreeJS)
+let _scene, _camera, _renderer, _clock, _stars, _sVel, _carGroup, _trailLine, _trailHistory;
+const STAR_N = 2000;
+
+// Track state
+let _activeCurve   = null;
+let _trackMeshes   = [];   // all meshes for current track (for disposal)
+let _activeCircIdx = 0;
+let _carT          = 0;
+const CAR_SPEED    = 0.000068;
+
+// Track fade state machine
+let _fadeState     = 'stable'; // 'stable' | 'fadeout' | 'fadein'
+let _fadeStart     = 0;
+const FADE_DUR     = 0.4;
+let _pendingIdx    = 0;
+
+// Camera
+let _cameraMode    = 'orbit';
+let _orbitAngle    = 0;
+const _camCurPos   = new THREE.Vector3(0, 38, 65);
+const _camCurLook  = new THREE.Vector3(0, 0, 0);
+const _camDesPos   = new THREE.Vector3(0, 38, 65);
+const _camDesLook  = new THREE.Vector3(0, 0, 0);
 
 // ═══════════════════════════════════════════════════════════════
-//  THREE.JS 3D SCENE
+//  TRACK MANAGER
+// ═══════════════════════════════════════════════════════════════
+function _buildVec3s(def) {
+  return def.pts.map(([x, z], i) => {
+    const y = (def.elev && def.elev[i] != null) ? def.elev[i] : 0;
+    return new THREE.Vector3(x, y, z);
+  });
+}
+
+function buildTrack(def) {
+  const pts   = _buildVec3s(def);
+  const curve = new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.5);
+  _activeCurve = curve;
+
+  function addTube(r, col, op, side) {
+    const geo = new THREE.TubeGeometry(curve, 300, r, 8, true);
+    const mat = new THREE.MeshBasicMaterial({
+      color: col, transparent: true, opacity: op,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+      side: side || THREE.FrontSide,
+    });
+    const m = new THREE.Mesh(geo, mat);
+    _scene.add(m);
+    _trackMeshes.push(m);
+  }
+
+  addTube(0.8, 0xe8002d, 0.06, THREE.BackSide); // glow halo
+  addTube(0.3, 0xe8002d, 0.82);                  // main track
+  addTube(0.05, 0xffffff, 0.3);                  // centre line
+
+  // Start/finish plane
+  const sfPos = curve.getPointAt(def.startT || 0);
+  const sfTan = curve.getTangentAt(def.startT || 0);
+  const sfGeo = new THREE.PlaneGeometry(1.4, 0.35);
+  const sfMat = new THREE.MeshBasicMaterial({
+    color: 0xffffff, transparent: true, opacity: 0.65,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  });
+  const sfMesh = new THREE.Mesh(sfGeo, sfMat);
+  sfMesh.position.copy(sfPos).setY(sfPos.y + 0.05);
+  const angle = Math.atan2(sfTan.x, sfTan.z);
+  sfMesh.rotation.x = -Math.PI / 2;
+  sfMesh.rotation.z = -angle;
+  _scene.add(sfMesh);
+  _trackMeshes.push(sfMesh);
+
+  // Corner labels as sprites
+  if (def.corners) {
+    def.corners.forEach(c => {
+      const sprite = _makeTextSprite(c.label);
+      const p = curve.getPointAt(c.t);
+      sprite.position.set(p.x, p.y + 1.4, p.z);
+      _scene.add(sprite);
+      _trackMeshes.push(sprite);
+    });
+  }
+}
+
+function _makeTextSprite(text) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 180; canvas.height = 56;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(0,0,0,0)';
+  ctx.fillRect(0, 0, 180, 56);
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fillText(text, 90, 36);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(3.5, 1.1, 1);
+  return sprite;
+}
+
+function disposeTrack() {
+  for (const obj of _trackMeshes) {
+    if (obj instanceof THREE.Sprite && obj.material && obj.material.map) obj.material.map.dispose();
+    if (obj.geometry) obj.geometry.dispose();
+    if (obj.material) obj.material.dispose();
+    _scene.remove(obj);
+  }
+  _trackMeshes = [];
+  _activeCurve = null;
+}
+
+function switchTrack(idx) {
+  if (idx === _activeCircIdx && _trackMeshes.length > 0) return;
+  _pendingIdx  = idx;
+  _fadeState   = 'fadeout';
+  _fadeStart   = _clock.getElapsedTime();
+  // Update pill active state
+  document.querySelectorAll('.track-pill').forEach((p, i) => p.classList.toggle('active', i === idx));
+  const pill = document.querySelector('.track-pill.active');
+  if (pill) pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+function _setTrackOpacity(alpha) {
+  for (const obj of _trackMeshes) {
+    if (obj.material && obj.material.transparent) {
+      if (obj.material._baseOp === undefined) obj.material._baseOp = obj.material.opacity;
+      obj.material.opacity = obj.material._baseOp * Math.max(0, Math.min(1, alpha));
+    }
+  }
+}
+
+function _updateTrackFade(elapsed) {
+  if (_fadeState === 'stable') return;
+  const alpha = Math.min((elapsed - _fadeStart) / FADE_DUR, 1);
+  if (_fadeState === 'fadeout') {
+    _setTrackOpacity(1 - alpha);
+    if (alpha >= 1) {
+      disposeTrack();
+      _activeCircIdx = _pendingIdx;
+      buildTrack(CIRCUITS[_activeCircIdx]);
+      _carT = 0;
+      _setTrackOpacity(0);
+      _fadeState = 'fadein';
+      _fadeStart = elapsed;
+      // reset camera orbit to current circuit defaults
+      const circ = CIRCUITS[_activeCircIdx];
+      if (_cameraMode === 'top') {
+        _camDesPos.set(circ.camTop[0], circ.camTop[1], circ.camTop[2]);
+      }
+    }
+  } else if (_fadeState === 'fadein') {
+    _setTrackOpacity(alpha);
+    if (alpha >= 1) { _setTrackOpacity(1); _fadeState = 'stable'; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  THREE.JS SCENE
 // ═══════════════════════════════════════════════════════════════
 function initThreeJS() {
   const canvas = document.getElementById('three-canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  _renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  _renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  _renderer.setSize(window.innerWidth, window.innerHeight);
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0a0a0f);
+  _scene = new THREE.Scene();
+  _scene.background = new THREE.Color(0x0a0a0f);
 
-  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-  let camAngle = 0;
+  _camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+  _camera.position.set(0, 38, 65);
 
-  // ── Circuit track (loosely F1 layout viewed from above) ──
-  const circuitPts = [
-    new THREE.Vector3(  0,  0, -28),
-    new THREE.Vector3( 18,  0, -28),
-    new THREE.Vector3( 30,  0, -20),
-    new THREE.Vector3( 34,  1,  -8),
-    new THREE.Vector3( 30,  2,   4),
-    new THREE.Vector3( 20,  2,  16),
-    new THREE.Vector3(  8,  1,  24),
-    new THREE.Vector3( -6,  0,  26),
-    new THREE.Vector3(-18, -1,  20),
-    new THREE.Vector3(-30, -1,   8),
-    new THREE.Vector3(-34,  0,  -2),
-    new THREE.Vector3(-28,  1, -14),
-    new THREE.Vector3(-16,  1, -24),
-    new THREE.Vector3( -6,  0, -28),
-  ];
-  const trackCurve = new THREE.CatmullRomCurve3(circuitPts, true);
+  _clock = new THREE.Clock();
 
-  // Outer glow halo
-  scene.add(new THREE.Mesh(
-    new THREE.TubeGeometry(trackCurve, 300, 1.1, 6, true),
-    new THREE.MeshBasicMaterial({ color: 0xe8002d, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.04, side: THREE.BackSide })
-  ));
-
-  // Main track tube
-  scene.add(new THREE.Mesh(
-    new THREE.TubeGeometry(trackCurve, 300, 0.28, 8, true),
-    new THREE.MeshBasicMaterial({ color: 0xe8002d, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.82 })
-  ));
-
-  // White centre line
-  scene.add(new THREE.Mesh(
-    new THREE.TubeGeometry(trackCurve, 300, 0.04, 4, true),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.22 })
-  ));
-
-  // ── F1 Car ──
-  const carGroup = new THREE.Group();
-  const redMat = new THREE.MeshBasicMaterial({ color: 0xd40026 });
-  const dkMat  = new THREE.MeshBasicMaterial({ color: 0x180408 });
-  const blkMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
-
-  // Body
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.22, 1.8), redMat);
-  carGroup.add(body);
-
-  // Cockpit
-  const cockpit = new THREE.Mesh(new THREE.BoxGeometry(0.27, 0.26, 0.5), dkMat);
-  cockpit.position.set(0, 0.21, 0.1);
-  carGroup.add(cockpit);
-
-  // Nose
-  const nose = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.13, 0.55), redMat);
-  nose.position.set(0, -0.02, 1.1);
-  carGroup.add(nose);
-
-  // Front wing
-  const fWing = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.05, 0.22), dkMat);
-  fWing.position.set(0, -0.11, 1.38);
-  carGroup.add(fWing);
-
-  // Rear wing main plane
-  const rWing = new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.07, 0.16), dkMat);
-  rWing.position.set(0, 0.52, -0.96);
-  carGroup.add(rWing);
-
-  // Rear wing endplate post
-  const rPost = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.48, 0.07), dkMat);
-  rPost.position.set(0, 0.28, -0.96);
-  carGroup.add(rPost);
-
-  // Wheels (cylinder rotated 90° so it rolls on its rim)
-  const wGeo = new THREE.CylinderGeometry(0.21, 0.21, 0.17, 10);
-  [[-0.44, -0.04,  0.68],
-   [ 0.44, -0.04,  0.68],
-   [-0.44, -0.04, -0.68],
-   [ 0.44, -0.04, -0.68]].forEach(([x, y, z]) => {
-    const w = new THREE.Mesh(wGeo, blkMat);
-    w.rotation.z = Math.PI / 2;
-    w.position.set(x, y, z);
-    carGroup.add(w);
-  });
-
-  scene.add(carGroup);
-
-  // ── Motion trail ──
-  const trailHistory = [];
-  const TRAIL_MAX = 45;
-  const trailMat = new THREE.LineBasicMaterial({
-    color: 0x00d4ff, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.72
-  });
-  let trailLine = new THREE.Line(new THREE.BufferGeometry(), trailMat);
-  scene.add(trailLine);
-
-  // ── Stars ──
-  const STAR_N = 2000;
+  // Stars
   const sPos = new Float32Array(STAR_N * 3);
-  const sVel = new Float32Array(STAR_N);
+  _sVel = new Float32Array(STAR_N);
   for (let i = 0; i < STAR_N; i++) {
-    sPos[i * 3]     = (Math.random() - 0.5) * 260;
-    sPos[i * 3 + 1] = (Math.random() - 0.5) * 180;
-    sPos[i * 3 + 2] = (Math.random() - 0.5) * 260;
-    sVel[i] = 0.03 + Math.random() * 0.04;
+    sPos[i*3]   = (Math.random()-0.5)*260;
+    sPos[i*3+1] = (Math.random()-0.5)*180;
+    sPos[i*3+2] = (Math.random()-0.5)*260;
+    _sVel[i] = 0.03 + Math.random()*0.04;
   }
   const sGeo = new THREE.BufferGeometry();
   sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-  const stars = new THREE.Points(sGeo, new THREE.PointsMaterial({
-    color: 0xffffff, size: 0.18, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.7
+  _stars = new THREE.Points(sGeo, new THREE.PointsMaterial({
+    color: 0xffffff, size: 0.18, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.7,
   }));
-  scene.add(stars);
+  _scene.add(_stars);
 
-  // ── Animation loop ──
-  const clock = new THREE.Clock();
-  let carT = 0;
-  const CAR_SPEED = 0.000068; // track fraction per millisecond
+  // F1 Car
+  _carGroup = new THREE.Group();
+  const redMat = new THREE.MeshBasicMaterial({ color: 0xd40026 });
+  const dkMat  = new THREE.MeshBasicMaterial({ color: 0x180408 });
+  const blkMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+  _carGroup.add(new THREE.Mesh(new THREE.BoxGeometry(0.55,0.22,1.8), redMat));
+  const cockpit = new THREE.Mesh(new THREE.BoxGeometry(0.27,0.26,0.5), dkMat);
+  cockpit.position.set(0,0.21,0.1); _carGroup.add(cockpit);
+  const nose = new THREE.Mesh(new THREE.BoxGeometry(0.21,0.13,0.55), redMat);
+  nose.position.set(0,-0.02,1.1); _carGroup.add(nose);
+  const fWing = new THREE.Mesh(new THREE.BoxGeometry(1.38,0.05,0.22), dkMat);
+  fWing.position.set(0,-0.11,1.38); _carGroup.add(fWing);
+  const rWing = new THREE.Mesh(new THREE.BoxGeometry(1.06,0.07,0.16), dkMat);
+  rWing.position.set(0,0.52,-0.96); _carGroup.add(rWing);
+  const rPost = new THREE.Mesh(new THREE.BoxGeometry(0.07,0.48,0.07), dkMat);
+  rPost.position.set(0,0.28,-0.96); _carGroup.add(rPost);
+  const wGeo = new THREE.CylinderGeometry(0.21,0.21,0.17,10);
+  [[-0.44,-0.04,0.68],[0.44,-0.04,0.68],[-0.44,-0.04,-0.68],[0.44,-0.04,-0.68]].forEach(([x,y,z]) => {
+    const w = new THREE.Mesh(wGeo, blkMat); w.rotation.z = Math.PI/2; w.position.set(x,y,z); _carGroup.add(w);
+  });
+  _scene.add(_carGroup);
 
-  function animate() {
-    requestAnimationFrame(animate);
-    const delta = clock.getDelta(); // seconds
-    const dtMs  = delta * 1000;
+  // Trail
+  _trailHistory = [];
+  _trailLine = new THREE.Line(
+    new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({ color:0x00d4ff, blending:THREE.AdditiveBlending, transparent:true, opacity:0.72 })
+  );
+  _scene.add(_trailLine);
 
-    // Camera orbit
-    camAngle += 0.0015;
-    camera.position.set(Math.sin(camAngle) * 65, 38, Math.cos(camAngle) * 65);
-    camera.lookAt(0, 0, 0);
+  // Build initial track (Australia)
+  buildTrack(CIRCUITS[0]);
 
-    // Car movement along circuit
-    carT = (carT + CAR_SPEED * dtMs) % 1;
-    const carPos     = trackCurve.getPointAt(carT);
-    const carTangent = trackCurve.getTangentAt(carT);
-    carGroup.position.copy(carPos);
-    carGroup.position.y += 0.42;
-    const lookTarget = carPos.clone().add(carTangent);
-    lookTarget.y += 0.42;
-    carGroup.lookAt(lookTarget);
-
-    // Trail
-    trailHistory.push(carGroup.position.clone());
-    if (trailHistory.length > TRAIL_MAX) trailHistory.shift();
-    if (trailHistory.length > 1) {
-      const tGeo = new THREE.BufferGeometry().setFromPoints(trailHistory);
-      trailLine.geometry.dispose();
-      trailLine.geometry = tGeo;
-    }
-
-    // Stars drift upward
-    const sp = stars.geometry.attributes.position.array;
-    for (let i = 0; i < STAR_N; i++) {
-      sp[i * 3 + 1] += sVel[i] * delta;
-      if (sp[i * 3 + 1] > 90) sp[i * 3 + 1] = -90;
-    }
-    stars.geometry.attributes.position.needsUpdate = true;
-
-    renderer.render(scene, camera);
-  }
-  animate();
+  // Camera button wiring
+  document.querySelectorAll('.cam-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      _cameraMode = btn.dataset.mode;
+      document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b === btn));
+      const circ = CIRCUITS[_activeCircIdx];
+      if (_cameraMode === 'top') {
+        _camDesPos.set(circ.camTop[0], circ.camTop[1], circ.camTop[2]);
+        _camDesLook.set(0, 0, 0);
+      } else if (_cameraMode === 'orbit') {
+        _camDesLook.set(0, 0, 0);
+      }
+    });
+  });
 
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    _camera.aspect = window.innerWidth / window.innerHeight;
+    _camera.updateProjectionMatrix();
+    _renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  _animate();
+}
+
+function _animate() {
+  requestAnimationFrame(_animate);
+  const delta   = _clock.getDelta();
+  const elapsed = _clock.getElapsedTime();
+  const dtMs    = delta * 1000;
+
+  // Car movement
+  if (_activeCurve) {
+    _carT = (_carT + CAR_SPEED * dtMs) % 1;
+    const carPos = _activeCurve.getPointAt(_carT);
+    const carTan = _activeCurve.getTangentAt(_carT);
+    _carGroup.position.copy(carPos).setY(carPos.y + 0.42);
+    const lookAt = carPos.clone().add(carTan); lookAt.y += 0.42;
+    _carGroup.lookAt(lookAt);
+
+    // Trail
+    _trailHistory.push(_carGroup.position.clone());
+    if (_trailHistory.length > 45) _trailHistory.shift();
+    if (_trailHistory.length > 1) {
+      const tGeo = new THREE.BufferGeometry().setFromPoints(_trailHistory);
+      _trailLine.geometry.dispose();
+      _trailLine.geometry = tGeo;
+    }
+  }
+
+  // Track fade
+  _updateTrackFade(elapsed);
+
+  // Camera
+  const LERP = 0.05;
+  if (_cameraMode === 'orbit') {
+    _orbitAngle += 0.0015;
+    const circ = CIRCUITS[_activeCircIdx];
+    const r = circ.camOrbit?.r || 65, h = circ.camOrbit?.h || 38;
+    _camDesPos.set(Math.sin(_orbitAngle)*r, h, Math.cos(_orbitAngle)*r);
+    _camDesLook.set(0, 0, 0);
+    _camCurPos.lerp(_camDesPos, LERP * 3);
+    _camCurLook.lerp(_camDesLook, LERP * 3);
+  } else if (_cameraMode === 'top') {
+    _camCurPos.lerp(_camDesPos, LERP);
+    _camCurLook.lerp(_camDesLook, LERP);
+  } else if (_cameraMode === 'chase' && _activeCurve) {
+    const carPos = _carGroup.position.clone();
+    const tangent = _activeCurve.getTangentAt(_carT).normalize();
+    _camDesPos.copy(carPos).addScaledVector(tangent, -9).add(new THREE.Vector3(0, 3.5, 0));
+    _camDesLook.copy(carPos).add(new THREE.Vector3(0, 0.8, 0));
+    _camCurPos.lerp(_camDesPos, LERP * 2);
+    _camCurLook.lerp(_camDesLook, LERP * 2);
+  }
+  _camera.position.copy(_camCurPos);
+  _camera.lookAt(_camCurLook);
+
+  // Stars drift upward
+  const sp = _stars.geometry.attributes.position.array;
+  for (let i = 0; i < STAR_N; i++) {
+    sp[i*3+1] += _sVel[i] * delta;
+    if (sp[i*3+1] > 90) sp[i*3+1] = -90;
+  }
+  _stars.geometry.attributes.position.needsUpdate = true;
+
+  _renderer.render(_scene, _camera);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PILL BAR
+// ═══════════════════════════════════════════════════════════════
+function buildPillBar() {
+  const bar = document.getElementById('pill-bar');
+  CIRCUITS.forEach((c, i) => {
+    const pill = document.createElement('div');
+    pill.className = 'track-pill' + (i === 0 ? ' active' : '');
+    pill.innerHTML = `<span class="pill-flag">${c.flag}</span>${c.name}<span class="pill-round">${c.round}</span>`;
+    pill.addEventListener('click', () => switchTrack(i));
+    bar.appendChild(pill);
   });
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  SIDEBAR POPULATION
+//  SIDEBAR
 // ═══════════════════════════════════════════════════════════════
 function populateSidebar() {
-  // Quick Questions
   const qqList = document.getElementById('qq-list');
   QUICK_QUESTIONS.forEach((q, i) => {
     const el = document.createElement('div');
     el.className = 'sidebar-item';
-    el.innerHTML = `<span class="q-num">Q${i + 1}</span><span>${q}</span>`;
+    el.innerHTML = `<span class="q-num">Q${i+1}</span><span>${q}</span>`;
     el.addEventListener('click', () => { setActive(el); sendMessage(q); });
     qqList.appendChild(el);
   });
-
-  // Teams
   const tList = document.getElementById('team-list');
   TEAMS.forEach(t => {
     const el = document.createElement('div');
@@ -633,8 +776,6 @@ function populateSidebar() {
     el.addEventListener('click', () => { setActive(el); sendMessage(q); });
     tList.appendChild(el);
   });
-
-  // Races
   const rList = document.getElementById('race-list');
   CALENDAR.forEach(([code, name]) => {
     const el = document.createElement('div');
@@ -648,8 +789,7 @@ function populateSidebar() {
 
 function setActive(el) {
   if (activeItem) activeItem.classList.remove('active');
-  activeItem = el;
-  el.classList.add('active');
+  activeItem = el; el.classList.add('active');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -660,13 +800,11 @@ function showWelcome() {
   msgs.innerHTML = '';
   const w = document.createElement('div');
   w.className = 'welcome';
-  w.innerHTML = `
-    <h2>🏎 F1 2026 SEASON PREDICTOR</h2>
+  w.innerHTML = `<h2>🏎 F1 2026 SEASON PREDICTOR</h2>
     <p>Season opens <strong>March 8 — Melbourne, Australia</strong>.<br>
     24 races · 11 teams · 22 drivers · Complete regulation reset.<br><br>
     New power units, active aero, two brand-new teams, and Lewis Hamilton in red.<br>
-    Ask me anything — or pick a topic from the sidebar.</p>
-  `;
+    Ask me anything — or pick a topic from the sidebar.</p>`;
   msgs.appendChild(w);
 }
 
@@ -678,33 +816,18 @@ function newChat() {
 
 function appendUserBubble(text) {
   const msgs = document.getElementById('messages');
-  const wrap = document.createElement('div');
-  wrap.className = 'msg-wrap user';
-  const label = document.createElement('div');
-  label.className = 'msg-label';
-  label.textContent = 'YOU';
-  const bubble = document.createElement('div');
-  bubble.className = 'msg-bubble user';
-  bubble.textContent = text;
-  wrap.appendChild(label);
-  wrap.appendChild(bubble);
-  msgs.appendChild(wrap);
-  scrollBottom();
+  const wrap = document.createElement('div'); wrap.className = 'msg-wrap user';
+  const label = document.createElement('div'); label.className = 'msg-label'; label.textContent = 'YOU';
+  const bubble = document.createElement('div'); bubble.className = 'msg-bubble user'; bubble.textContent = text;
+  wrap.appendChild(label); wrap.appendChild(bubble); msgs.appendChild(wrap); scrollBottom();
 }
 
 function appendAIBubble() {
   const msgs = document.getElementById('messages');
-  const wrap = document.createElement('div');
-  wrap.className = 'msg-wrap ai';
-  const label = document.createElement('div');
-  label.className = 'msg-label ai';
-  label.textContent = 'CLAUDE AI';
-  const bubble = document.createElement('div');
-  bubble.className = 'msg-bubble ai streaming';
-  wrap.appendChild(label);
-  wrap.appendChild(bubble);
-  msgs.appendChild(wrap);
-  scrollBottom();
+  const wrap = document.createElement('div'); wrap.className = 'msg-wrap ai';
+  const label = document.createElement('div'); label.className = 'msg-label ai'; label.textContent = 'CLAUDE AI';
+  const bubble = document.createElement('div'); bubble.className = 'msg-bubble ai streaming';
+  wrap.appendChild(label); wrap.appendChild(bubble); msgs.appendChild(wrap); scrollBottom();
   return bubble;
 }
 
@@ -714,23 +837,58 @@ function scrollBottom() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  LIVE F1 DATA (Jolpica — drop-in Ergast replacement)
+// ═══════════════════════════════════════════════════════════════
+const JOLPICA = 'https://api.jolpi.ca/ergast/f1';
+
+async function fetchLiveData() {
+  try {
+    const sig = typeof AbortSignal?.timeout === 'function' ? AbortSignal.timeout(5000) : undefined;
+    const opts = sig ? { signal: sig } : {};
+    const [last, drv, con, nxt] = await Promise.allSettled([
+      fetch(`${JOLPICA}/current/last/results.json`, opts).then(r => r.json()),
+      fetch(`${JOLPICA}/current/driverStandings.json`, opts).then(r => r.json()),
+      fetch(`${JOLPICA}/current/constructorStandings.json`, opts).then(r => r.json()),
+      fetch(`${JOLPICA}/current/next.json`, opts).then(r => r.json()),
+    ]);
+    const lines = ['LIVE 2026 SEASON DATA (fetched in real-time):'];
+    if (last.status === 'fulfilled') try {
+      const race = last.value.MRData.RaceTable.Races[0];
+      const res  = race.Results;
+      lines.push(`Last race: Rd${race.round} ${race.raceName} — Winner: ${res[0].Driver.familyName} (${res[0].Constructor.name})`);
+      lines.push('Top 10: ' + res.slice(0,10).map((r,i)=>`${i+1}. ${r.Driver.familyName} (${r.Constructor.name}) ${r.Time?.time||r.status}`).join(', '));
+    } catch(e){}
+    if (drv.status === 'fulfilled') try {
+      const s = drv.value.MRData.StandingsTable.StandingsLists[0].DriverStandings;
+      lines.push('Drivers: ' + s.slice(0,5).map(d=>`${d.position}. ${d.Driver.familyName} ${d.points}pts`).join(', '));
+    } catch(e){}
+    if (con.status === 'fulfilled') try {
+      const s = con.value.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
+      lines.push('Constructors: ' + s.slice(0,5).map(c=>`${c.position}. ${c.Constructor.name} ${c.points}pts`).join(', '));
+    } catch(e){}
+    if (nxt.status === 'fulfilled') try {
+      const r = nxt.value.MRData.RaceTable.Races[0];
+      lines.push(`Next: ${r.raceName} on ${r.date} at ${r.Circuit.circuitName}, ${r.Circuit.Location.country}`);
+    } catch(e){}
+    return lines.length > 1 ? lines.join('\n') : '';
+  } catch(e) { return ''; }
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  API STREAMING
 // ═══════════════════════════════════════════════════════════════
 async function sendMessage(text) {
   if (isStreaming || !text.trim()) return;
   isStreaming = true;
-
   const inputEl = document.getElementById('chat-input');
   const askBtn  = document.getElementById('ask-btn');
-  inputEl.disabled = true;
-  askBtn.disabled  = true;
-
+  inputEl.disabled = true; askBtn.disabled = true;
   appendUserBubble(text);
   conversation.push({ role: 'user', content: text });
-
   const aiBubble = appendAIBubble();
-
   try {
+    const liveData = await fetchLiveData();
+    const systemWithLive = liveData ? liveData + '\n\n' + SYSTEM_PROMPT : SYSTEM_PROMPT;
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -743,77 +901,86 @@ async function sendMessage(text) {
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         stream: true,
-        system: SYSTEM_PROMPT,
+        system: systemWithLive,
         messages: conversation,
       }),
     });
-
     if (!response.ok) {
       let errMsg = `API error ${response.status}`;
-      try {
-        const errBody = await response.json();
-        errMsg = errBody.error?.message || errMsg;
-      } catch (e) { /* ignore */ }
+      try { const b = await response.json(); errMsg = b.error?.message || errMsg; } catch(e){}
       aiBubble.classList.remove('streaming');
       aiBubble.textContent = `⚠ ${errMsg}`;
       if (response.status === 401) {
         aiBubble.textContent += '\n\nInvalid API key. Reloading in 2s...';
-        setTimeout(() => { sessionStorage.removeItem('f1_api_key'); location.reload(); }, 2000);
+        setTimeout(() => { localStorage.removeItem('f1_api_key'); location.reload(); }, 2000);
       }
       return;
     }
-
     const reader  = response.body.getReader();
     const decoder = new TextDecoder();
-    let buffer = '';
-    let fullResponse = '';
-
+    let buffer = '', fullResponse = '';
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
-
-      // SSE events are delimited by double newlines
       const events = buffer.split('\n\n');
-      buffer = events.pop(); // keep any partial trailing event
-
+      buffer = events.pop();
       for (const event of events) {
         let dataLine = null;
-        for (const line of event.split('\n')) {
-          if (line.startsWith('data: ')) dataLine = line.slice(6).trim();
-        }
+        for (const line of event.split('\n')) { if (line.startsWith('data: ')) dataLine = line.slice(6).trim(); }
         if (!dataLine || dataLine === '[DONE]') continue;
         try {
           const parsed = JSON.parse(dataLine);
-          if (parsed.type === 'error') {
-            throw new Error(parsed.error?.message || 'Stream error');
-          }
+          if (parsed.type === 'error') throw new Error(parsed.error?.message || 'Stream error');
           if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
-            const chunk = parsed.delta.text;
-            fullResponse += chunk;
-            aiBubble.textContent += chunk;
+            fullResponse += parsed.delta.text;
+            aiBubble.textContent += parsed.delta.text;
             scrollBottom();
           }
-        } catch (e) {
-          if (e.message !== 'Stream error') { /* ignore JSON parse noise */ }
-          else throw e;
-        }
+        } catch(e) { if (e.message !== 'Stream error') { /* ignore JSON parse noise */ } else throw e; }
       }
     }
-
     aiBubble.classList.remove('streaming');
     conversation.push({ role: 'assistant', content: fullResponse });
-
-  } catch (err) {
+  } catch(err) {
     aiBubble.classList.remove('streaming');
     aiBubble.textContent = `⚠ ${err.message}`;
   } finally {
     isStreaming = false;
-    inputEl.disabled = false;
-    askBtn.disabled  = false;
+    inputEl.disabled = false; askBtn.disabled = false;
     inputEl.focus();
   }
 }
+
+// ═══════════════════════════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════════════════════════
+function maskKey(k) {
+  if (!k || k.length < 8) return '(none)';
+  return k.slice(0,7) + '••••••••••••••' + k.slice(-6);
+}
+
+document.getElementById('settings-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  const dd = document.getElementById('settings-dd');
+  document.getElementById('key-display').textContent = maskKey(apiKey);
+  dd.classList.toggle('open');
+});
+document.addEventListener('click', e => {
+  const dd = document.getElementById('settings-dd');
+  const btn = document.getElementById('settings-btn');
+  if (!dd.contains(e.target) && e.target !== btn) dd.classList.remove('open');
+});
+document.getElementById('change-key-btn').addEventListener('click', () => {
+  localStorage.removeItem('f1_api_key'); apiKey = '';
+  document.getElementById('settings-dd').classList.remove('open');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('api-modal').style.display = 'flex';
+  document.getElementById('api-key-input').value = '';
+});
+document.getElementById('clear-key-btn').addEventListener('click', () => {
+  localStorage.removeItem('f1_api_key'); location.reload();
+});
 
 // ═══════════════════════════════════════════════════════════════
 //  APP STARTUP
@@ -821,18 +988,18 @@ async function sendMessage(text) {
 function startApp() {
   document.getElementById('api-modal').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
+  document.getElementById('cam-btns').classList.add('visible');
 
   initThreeJS();
+  buildPillBar();
   populateSidebar();
   showWelcome();
 
-  // Input handlers
   document.getElementById('ask-btn').addEventListener('click', () => {
     const inp = document.getElementById('chat-input');
     const text = inp.value.trim();
     if (text) { inp.value = ''; sendMessage(text); }
   });
-
   document.getElementById('chat-input').addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -840,11 +1007,10 @@ function startApp() {
       if (text) { e.target.value = ''; sendMessage(text); }
     }
   });
-
   document.getElementById('new-chat-btn').addEventListener('click', newChat);
 }
 
-// API key modal handlers
+// API Key modal
 document.getElementById('api-key-btn').addEventListener('click', () => {
   const key = document.getElementById('api-key-input').value.trim();
   if (!key) {
@@ -853,15 +1019,14 @@ document.getElementById('api-key-btn').addEventListener('click', () => {
     return;
   }
   apiKey = key;
-  sessionStorage.setItem('f1_api_key', key);
+  localStorage.setItem('f1_api_key', key);
   startApp();
 });
-
 document.getElementById('api-key-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('api-key-btn').click();
 });
 
-// Auto-start if key already stored in this session
+// Auto-start if key already in localStorage
 if (apiKey) startApp();
 </script>
 </body>
