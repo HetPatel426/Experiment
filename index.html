@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>F1 2026 Season Predictor · AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0a0a0f;
+  --panel:rgba(10,10,20,0.78);
+  --red:#e8002d;
+  --red-dim:rgba(232,0,45,0.12);
+  --cyan:#00d4ff;
+  --white:#ffffff;
+  --muted:#55556a;
+  --border:rgba(255,255,255,0.07);
+  --hdr:56px;
+  --inp:72px;
+  --side:260px;
+}
+
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--white);}
+
+/* ── CANVAS ── */
+#three-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
+
+/* ── API KEY MODAL ── */
+#api-modal{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.88);
+  backdrop-filter:blur(12px);
+}
+.modal-box{
+  background:rgba(12,12,24,0.97);
+  border:1px solid rgba(232,0,45,0.45);
+  border-radius:18px;
+  padding:44px 52px;
+  width:min(500px,92vw);
+  text-align:center;
+  box-shadow:0 0 80px rgba(232,0,45,0.18),0 0 160px rgba(232,0,45,0.07);
+}
+.modal-icon{font-size:52px;margin-bottom:18px;line-height:1;}
+.modal-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:20px;font-weight:900;
+  letter-spacing:3px;color:var(--white);
+  margin-bottom:10px;
+}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:30px;line-height:1.6;}
+.api-input{
+  width:100%;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  padding:13px 16px;
+  outline:none;
+  transition:border-color .2s;
+  margin-bottom:14px;
+}
+.api-input:focus{border-color:rgba(232,0,45,0.6);}
+.api-input.invalid{border-color:var(--red);animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.btn-primary{
+  width:100%;
+  background:var(--red);color:var(--white);
+  font-family:'Orbitron',sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:2.5px;
+  border:none;border-radius:9px;
+  padding:15px;cursor:pointer;
+  transition:opacity .2s,transform .1s;
+}
+.btn-primary:hover{opacity:.87;}
+.btn-primary:active{transform:scale(.98);}
+.modal-note{font-size:11px;color:var(--muted);margin-top:18px;line-height:1.5;}
+.modal-link{display:inline-block;font-size:12px;color:var(--cyan);text-decoration:none;margin-top:10px;}
+.modal-link:hover{text-decoration:underline;}
+
+/* ── APP SHELL ── */
+#app{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;}
+
+/* ── HEADER ── */
+#topbar{
+  height:var(--hdr);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  flex-shrink:0;
+}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.topbar-logo{font-size:22px;}
+.topbar-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:13px;font-weight:900;letter-spacing:2.5px;
+  color:var(--white);
+}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.live-badge{
+  font-family:'Orbitron',sans-serif;
+  font-size:9px;font-weight:700;letter-spacing:1px;
+  color:var(--cyan);
+  animation:pulse-cyan 2.2s ease-in-out infinite;
+}
+@keyframes pulse-cyan{
+  0%,100%{opacity:1;text-shadow:0 0 10px var(--cyan);}
+  50%{opacity:.45;text-shadow:none;}
+}
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--red);color:var(--red);
+  font-family:'Orbitron',sans-serif;
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+  padding:7px 14px;border-radius:6px;
+  cursor:pointer;transition:background .2s,color .2s;
+}
+.btn-outline:hover{background:var(--red);color:var(--white);}
+
+/* ── LAYOUT ── */
+#layout{flex:1;display:flex;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  width:var(--side);flex-shrink:0;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  overflow-y:auto;overflow-x:hidden;
+}
+#sidebar::-webkit-scrollbar{width:3px;}
+#sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.09);border-radius:2px;}
+.sidebar-section{padding:14px 0;}
+.sidebar-section+.sidebar-section{border-top:1px solid var(--border);}
+.sidebar-hdr{
+  font-family:'Orbitron',sans-serif;
+  font-size:8.5px;font-weight:700;letter-spacing:2px;
+  color:var(--muted);padding:0 16px 10px;
+}
+.sidebar-item{
+  display:flex;align-items:center;gap:9px;
+  padding:7px 16px;cursor:pointer;
+  transition:background .15s;
+  font-size:12px;color:rgba(255,255,255,0.72);
+  line-height:1.35;
+}
+.sidebar-item:hover{background:rgba(255,255,255,0.04);color:var(--white);}
+.sidebar-item.active{
+  background:var(--red-dim);color:var(--white);
+  border-right:2px solid var(--red);
+}
+.team-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.race-code{
+  font-family:'Orbitron',sans-serif;
+  font-size:8.5px;color:var(--muted);width:24px;flex-shrink:0;
+}
+.q-num{
+  font-family:'Orbitron',sans-serif;
+  font-size:8.5px;font-weight:700;color:var(--red);
+  width:20px;flex-shrink:0;
+}
+
+/* ── CHAT AREA ── */
+#chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#messages{
+  flex:1;overflow-y:auto;
+  padding:24px;
+  display:flex;flex-direction:column;gap:18px;
+}
+#messages::-webkit-scrollbar{width:3px;}
+#messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.09);border-radius:2px;}
+
+/* Welcome */
+.welcome{
+  align-self:center;
+  background:rgba(12,12,26,0.7);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:24px 32px;
+  text-align:center;max-width:540px;margin:auto;
+}
+.welcome h2{
+  font-family:'Orbitron',sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:2px;
+  color:var(--red);margin-bottom:10px;
+}
+.welcome p{font-size:13px;color:rgba(255,255,255,0.58);line-height:1.65;}
+.welcome strong{color:rgba(255,255,255,0.85);}
+
+/* Bubbles */
+.msg-wrap{display:flex;flex-direction:column;}
+.msg-wrap.user{align-items:flex-end;}
+.msg-wrap.ai{align-items:flex-start;}
+.msg-label{
+  font-family:'Orbitron',sans-serif;
+  font-size:8px;font-weight:700;letter-spacing:1.5px;
+  margin-bottom:5px;color:var(--muted);
+}
+.msg-label.ai{color:rgba(0,212,255,0.65);}
+.msg-bubble{
+  max-width:78%;
+  font-size:13.5px;line-height:1.68;
+  white-space:pre-wrap;word-break:break-word;
+}
+.msg-bubble.user{
+  background:rgba(90,8,18,0.65);
+  border:1px solid rgba(232,0,45,0.28);
+  border-radius:16px 16px 4px 16px;
+  padding:12px 16px;
+  color:rgba(255,255,255,0.9);
+  max-width:68%;
+}
+.msg-bubble.ai{
+  background:rgba(12,12,28,0.85);
+  border:1px solid var(--border);
+  border-left:3px solid var(--red);
+  border-radius:4px 16px 16px 16px;
+  padding:14px 18px;
+  color:rgba(255,255,255,0.87);
+  box-shadow:0 0 24px rgba(0,212,255,0.05);
+  max-width:88%;
+}
+.msg-bubble.ai.streaming::after{
+  content:'▋';display:inline;
+  color:var(--cyan);
+  animation:blink .75s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── INPUT BAR ── */
+#input-bar{
+  height:var(--inp);
+  display:flex;align-items:center;gap:12px;
+  padding:0 20px;
+  background:var(--panel);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  flex-shrink:0;
+}
+#chat-input{
+  flex:1;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  padding:14px 18px;
+  outline:none;
+  transition:border-color .2s;
+}
+#chat-input:focus{border-color:rgba(232,0,45,0.45);}
+#chat-input::placeholder{color:var(--muted);}
+#chat-input:disabled{opacity:.45;}
+.btn-ask{
+  background:var(--red);color:var(--white);
+  font-family:'Orbitron',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:1.5px;
+  border:none;border-radius:10px;
+  padding:14px 22px;cursor:pointer;
+  transition:opacity .2s;white-space:nowrap;flex-shrink:0;
+}
+.btn-ask:hover:not(:disabled){opacity:.85;}
+.btn-ask:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:620px){
+  :root{--side:0px;}
+  #sidebar{display:none;}
+  .topbar-title{font-size:10px;letter-spacing:1.5px;}
+  .msg-bubble.ai{max-width:95%;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="three-canvas"></canvas>
+
+<!-- API Key Modal -->
+<div id="api-modal">
+  <div class="modal-box">
+    <div class="modal-icon">🏎</div>
+    <h1 class="modal-title">F1 2026 PREDICTOR</h1>
+    <p class="modal-sub">Powered by Claude AI · Enter your Anthropic API key to start predicting the 2026 season</p>
+    <input type="password" id="api-key-input" class="api-input" placeholder="sk-ant-api03-...">
+    <button id="api-key-btn" class="btn-primary">START ENGINE</button>
+    <p class="modal-note">Your key is stored in sessionStorage only · Never sent anywhere except api.anthropic.com</p>
+    <a href="https://console.anthropic.com" target="_blank" class="modal-link">Get a free API key →</a>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="app" style="display:none">
+  <header id="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">🏁</span>
+      <span class="topbar-title">F1 2026 PREDICTOR</span>
+    </div>
+    <div class="topbar-right">
+      <span class="live-badge">● LIVE</span>
+      <button id="new-chat-btn" class="btn-outline">NEW CHAT</button>
+    </div>
+  </header>
+
+  <div id="layout">
+    <aside id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-hdr">QUICK QUESTIONS</div>
+        <div id="qq-list"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-hdr">BY TEAM</div>
+        <div id="team-list"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-hdr">BY RACE</div>
+        <div id="race-list"></div>
+      </div>
+    </aside>
+
+    <main id="chat-main">
+      <div id="messages"></div>
+    </main>
+  </div>
+
+  <div id="input-bar">
+    <input type="text" id="chat-input" placeholder="Ask a prediction about the 2026 F1 season..." autocomplete="off" spellcheck="false">
+    <button id="ask-btn" class="btn-ask">ASK ▶</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  F1 DATA
+// ═══════════════════════════════════════════════════════════════
+const TEAMS = [
+  { name:'McLaren',      drivers:['Lando Norris','Oscar Piastri'],        engine:'Mercedes',  color:'#FF8000' },
+  { name:'Mercedes',     drivers:['George Russell','Kimi Antonelli'],     engine:'Mercedes',  color:'#00D2BE' },
+  { name:'Red Bull',     drivers:['Max Verstappen','Isack Hadjar'],       engine:'Ford/Honda',color:'#3671C6' },
+  { name:'Ferrari',      drivers:['Charles Leclerc','Lewis Hamilton'],    engine:'Ferrari',   color:'#E8002D' },
+  { name:'Williams',     drivers:['Carlos Sainz','Alex Albon'],           engine:'Mercedes',  color:'#64C4FF' },
+  { name:'Racing Bulls', drivers:['Liam Lawson','Arvid Lindblad'],        engine:'Honda',     color:'#6692FF' },
+  { name:'Aston Martin', drivers:['Fernando Alonso','Lance Stroll'],      engine:'Mercedes',  color:'#358C75' },
+  { name:'Haas',         drivers:['Esteban Ocon','Oliver Bearman'],       engine:'Ferrari',   color:'#B6BABD' },
+  { name:'Audi',         drivers:['Nico Hülkenberg','Gabriel Bortoleto'],engine:'Audi',      color:'#C8E95C' },
+  { name:'Alpine',       drivers:['Pierre Gasly','Jack Doohan'],          engine:'Mercedes',  color:'#FF87BC' },
+  { name:'Cadillac',     drivers:['Sergio Pérez','Valtteri Bottas'],      engine:'Ferrari',   color:'#C8A96E' },
+];
+
+const CALENDAR = [
+  ['R1','Australia'],['R2','China'],['R3','Japan'],['R4','Bahrain'],
+  ['R5','Saudi Arabia'],['R6','Miami'],['R7','Canada'],['R8','Monaco'],
+  ['R9','Spain'],['R10','Austria'],['R11','Britain'],['R12','Belgium'],
+  ['R13','Hungary'],['R14','Netherlands'],['R15','Italy'],['R16','Azerbaijan'],
+  ['R17','Singapore'],['R18','USA (Austin)'],['R19','Mexico'],['R20','Brazil'],
+  ['R21','Las Vegas'],['R22','Qatar'],['R23','Madrid'],['R24','Abu Dhabi'],
+];
+
+const QUICK_QUESTIONS = [
+  "Who wins the 2026 Drivers' Championship and why?",
+  "Which team wins the 2026 Constructors' Championship?",
+  "How will Lewis Hamilton perform at Ferrari in his debut season?",
+  "Can Verstappen win back the title after losing to Norris in 2025?",
+  "How does active aero change racing strategy in 2026?",
+  "Will Adrian Newey transform Aston Martin into title contenders?",
+  "Will Cadillac score points in their debut season?",
+  "Who is the standout rookie — Hadjar, Antonelli, or Lindblad?",
+];
+
+const SYSTEM_PROMPT = `You are an expert Formula 1 analyst providing predictions for the 2026 F1 season.
+
+2025 SEASON RECAP:
+Championship: 1. Lando Norris (McLaren) 436pts — 2025 World Champion, 2. Max Verstappen (Red Bull) 434pts, 3. Oscar Piastri (McLaren) 398pts, 4. George Russell (Mercedes) 312pts, 5. Charles Leclerc (Ferrari) 287pts. McLaren won the Constructors' Championship with 834pts. The title was decided at the Abu Dhabi final round — Verstappen won the race but Norris finished P2 to clinch by just 2 points, the tightest finish since 2021.
+
+2025 Race Winners: Australia-Norris, China-Verstappen, Japan-Verstappen, Bahrain-Russell, Saudi Arabia-Hamilton, Miami-Norris, Monaco-Leclerc, Canada-Norris, Spain-Verstappen, Austria-Norris, Britain-Piastri, Belgium-Piastri, Hungary-Norris, Netherlands-Verstappen, Italy-Russell, Azerbaijan-Norris, Singapore-Verstappen, USA-Verstappen, Mexico-Verstappen, Brazil-Piastri, Las Vegas-Norris, Qatar-Leclerc, Madrid-Hamilton, Abu Dhabi-Verstappen.
+
+2026 REGULATION RESET:
+- Completely new power units: ~50/50 ICE/electric split, new manufacturers including Audi debut and Ford/Honda for Red Bull
+- Active aerodynamics replace DRS: "Overtake Mode" activated within 1 second of the car ahead, Active Aero on front and rear wings
+- 24 races from Australia (March 8) to Abu Dhabi (December 6)
+- New Madrid street circuit replaces Imola. 6 Sprint weekends: China, Miami, Canada, Britain, Netherlands, Singapore
+- Cost cap raised to $215M. Three pre-season tests (Barcelona Jan, Bahrain Feb x2)
+- Regulation reset means 2025 competitiveness is unreliable predictor of 2026 performance
+
+2026 DRIVER LINEUPS:
+- McLaren: Lando Norris (reigning WDC, #4), Oscar Piastri (#81) — Mercedes power
+- Mercedes: George Russell (#63), Kimi Antonelli (#12, 18yo stepping up from F2) — bookies favour Russell for WDC
+- Red Bull: Max Verstappen (#1), Isack Hadjar (#6, F2 champion rookie) — Ford/Honda power
+- Ferrari: Charles Leclerc (#16), Lewis Hamilton (#44, blockbuster move from Mercedes) — strong preseason pace
+- Williams: Carlos Sainz (#55), Alex Albon (#23) — Mercedes customer power
+- Racing Bulls: Liam Lawson (#30), Arvid Lindblad (#43, 18yo — youngest on the grid) — Honda power
+- Aston Martin: Fernando Alonso (#14), Lance Stroll (#18) — Adrian Newey's first full season as technical lead; biggest wildcard
+- Haas: Esteban Ocon (#31), Oliver Bearman (#87) — Ferrari power
+- Audi: Nico Hülkenberg (#27), Gabriel Bortoleto (#5, 2024 F2 champion) — new Audi power unit, completely unproven in racing
+- Alpine: Pierre Gasly (#10), Jack Doohan (#7) — Mercedes customer power
+- Cadillac: Sergio Pérez (#11), Valtteri Bottas (#77) — brand new 11th team, Ferrari power, first new constructor since Haas 2016
+
+PRESEASON TESTING:
+- Lewis Hamilton set fastest time at Barcelona private test (Jan 26–30); Ferrari and Mercedes engines looked strong
+- Kimi Antonelli topped Bahrain Test 1 (Feb 11–13); Mercedes overall impressive
+- Red Bull Ford/Honda integration still being optimised; some reliability concerns
+- Audi power unit drew reliability concern in testing; Cadillac completed solid mileage but ultimate pace unclear
+
+KEY 2026 STORYLINES:
+- Norris defending his first title against a highly motivated Verstappen
+- Hamilton at Ferrari — the dream partnership, can he win a record 8th world title?
+- Adrian Newey's Aston Martin: could be the biggest wildcard or the biggest disappointment
+- Cadillac as 11th constructor: first new team since Haas in 2016
+- Audi's completely race-unproven power unit is a major reliability question mark
+- Active Aero fundamentally changes overtaking dynamics and race strategy
+- Three genuine rookies promoted simultaneously: Antonelli (Mercedes), Hadjar (Red Bull), Lindblad (Racing Bulls)
+
+Provide detailed, analytical predictions with clear reasoning. Be specific about performance expectations, reliability risks, and strategic factors. Use F1 terminology. Acknowledge genuine uncertainty. Keep responses to around 200–350 words. Prefer plain text over heavy markdown — use dashes for lists when helpful.`;
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+let apiKey = sessionStorage.getItem('f1_api_key') || '';
+let conversation = [];
+let isStreaming = false;
+let activeItem = null;
+
+// ═══════════════════════════════════════════════════════════════
+//  THREE.JS 3D SCENE
+// ═══════════════════════════════════════════════════════════════
+function initThreeJS() {
+  const canvas = document.getElementById('three-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0a0f);
+
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+  let camAngle = 0;
+
+  // ── Circuit track (loosely F1 layout viewed from above) ──
+  const circuitPts = [
+    new THREE.Vector3(  0,  0, -28),
+    new THREE.Vector3( 18,  0, -28),
+    new THREE.Vector3( 30,  0, -20),
+    new THREE.Vector3( 34,  1,  -8),
+    new THREE.Vector3( 30,  2,   4),
+    new THREE.Vector3( 20,  2,  16),
+    new THREE.Vector3(  8,  1,  24),
+    new THREE.Vector3( -6,  0,  26),
+    new THREE.Vector3(-18, -1,  20),
+    new THREE.Vector3(-30, -1,   8),
+    new THREE.Vector3(-34,  0,  -2),
+    new THREE.Vector3(-28,  1, -14),
+    new THREE.Vector3(-16,  1, -24),
+    new THREE.Vector3( -6,  0, -28),
+  ];
+  const trackCurve = new THREE.CatmullRomCurve3(circuitPts, true);
+
+  // Outer glow halo
+  scene.add(new THREE.Mesh(
+    new THREE.TubeGeometry(trackCurve, 300, 1.1, 6, true),
+    new THREE.MeshBasicMaterial({ color: 0xe8002d, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.04, side: THREE.BackSide })
+  ));
+
+  // Main track tube
+  scene.add(new THREE.Mesh(
+    new THREE.TubeGeometry(trackCurve, 300, 0.28, 8, true),
+    new THREE.MeshBasicMaterial({ color: 0xe8002d, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.82 })
+  ));
+
+  // White centre line
+  scene.add(new THREE.Mesh(
+    new THREE.TubeGeometry(trackCurve, 300, 0.04, 4, true),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.22 })
+  ));
+
+  // ── F1 Car ──
+  const carGroup = new THREE.Group();
+  const redMat = new THREE.MeshBasicMaterial({ color: 0xd40026 });
+  const dkMat  = new THREE.MeshBasicMaterial({ color: 0x180408 });
+  const blkMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+
+  // Body
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.22, 1.8), redMat);
+  carGroup.add(body);
+
+  // Cockpit
+  const cockpit = new THREE.Mesh(new THREE.BoxGeometry(0.27, 0.26, 0.5), dkMat);
+  cockpit.position.set(0, 0.21, 0.1);
+  carGroup.add(cockpit);
+
+  // Nose
+  const nose = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.13, 0.55), redMat);
+  nose.position.set(0, -0.02, 1.1);
+  carGroup.add(nose);
+
+  // Front wing
+  const fWing = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.05, 0.22), dkMat);
+  fWing.position.set(0, -0.11, 1.38);
+  carGroup.add(fWing);
+
+  // Rear wing main plane
+  const rWing = new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.07, 0.16), dkMat);
+  rWing.position.set(0, 0.52, -0.96);
+  carGroup.add(rWing);
+
+  // Rear wing endplate post
+  const rPost = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.48, 0.07), dkMat);
+  rPost.position.set(0, 0.28, -0.96);
+  carGroup.add(rPost);
+
+  // Wheels (cylinder rotated 90° so it rolls on its rim)
+  const wGeo = new THREE.CylinderGeometry(0.21, 0.21, 0.17, 10);
+  [[-0.44, -0.04,  0.68],
+   [ 0.44, -0.04,  0.68],
+   [-0.44, -0.04, -0.68],
+   [ 0.44, -0.04, -0.68]].forEach(([x, y, z]) => {
+    const w = new THREE.Mesh(wGeo, blkMat);
+    w.rotation.z = Math.PI / 2;
+    w.position.set(x, y, z);
+    carGroup.add(w);
+  });
+
+  scene.add(carGroup);
+
+  // ── Motion trail ──
+  const trailHistory = [];
+  const TRAIL_MAX = 45;
+  const trailMat = new THREE.LineBasicMaterial({
+    color: 0x00d4ff, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.72
+  });
+  let trailLine = new THREE.Line(new THREE.BufferGeometry(), trailMat);
+  scene.add(trailLine);
+
+  // ── Stars ──
+  const STAR_N = 2000;
+  const sPos = new Float32Array(STAR_N * 3);
+  const sVel = new Float32Array(STAR_N);
+  for (let i = 0; i < STAR_N; i++) {
+    sPos[i * 3]     = (Math.random() - 0.5) * 260;
+    sPos[i * 3 + 1] = (Math.random() - 0.5) * 180;
+    sPos[i * 3 + 2] = (Math.random() - 0.5) * 260;
+    sVel[i] = 0.03 + Math.random() * 0.04;
+  }
+  const sGeo = new THREE.BufferGeometry();
+  sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+  const stars = new THREE.Points(sGeo, new THREE.PointsMaterial({
+    color: 0xffffff, size: 0.18, blending: THREE.AdditiveBlending, transparent: true, opacity: 0.7
+  }));
+  scene.add(stars);
+
+  // ── Animation loop ──
+  const clock = new THREE.Clock();
+  let carT = 0;
+  const CAR_SPEED = 0.000068; // track fraction per millisecond
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta(); // seconds
+    const dtMs  = delta * 1000;
+
+    // Camera orbit
+    camAngle += 0.0015;
+    camera.position.set(Math.sin(camAngle) * 65, 38, Math.cos(camAngle) * 65);
+    camera.lookAt(0, 0, 0);
+
+    // Car movement along circuit
+    carT = (carT + CAR_SPEED * dtMs) % 1;
+    const carPos     = trackCurve.getPointAt(carT);
+    const carTangent = trackCurve.getTangentAt(carT);
+    carGroup.position.copy(carPos);
+    carGroup.position.y += 0.42;
+    const lookTarget = carPos.clone().add(carTangent);
+    lookTarget.y += 0.42;
+    carGroup.lookAt(lookTarget);
+
+    // Trail
+    trailHistory.push(carGroup.position.clone());
+    if (trailHistory.length > TRAIL_MAX) trailHistory.shift();
+    if (trailHistory.length > 1) {
+      const tGeo = new THREE.BufferGeometry().setFromPoints(trailHistory);
+      trailLine.geometry.dispose();
+      trailLine.geometry = tGeo;
+    }
+
+    // Stars drift upward
+    const sp = stars.geometry.attributes.position.array;
+    for (let i = 0; i < STAR_N; i++) {
+      sp[i * 3 + 1] += sVel[i] * delta;
+      if (sp[i * 3 + 1] > 90) sp[i * 3 + 1] = -90;
+    }
+    stars.geometry.attributes.position.needsUpdate = true;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SIDEBAR POPULATION
+// ═══════════════════════════════════════════════════════════════
+function populateSidebar() {
+  // Quick Questions
+  const qqList = document.getElementById('qq-list');
+  QUICK_QUESTIONS.forEach((q, i) => {
+    const el = document.createElement('div');
+    el.className = 'sidebar-item';
+    el.innerHTML = `<span class="q-num">Q${i + 1}</span><span>${q}</span>`;
+    el.addEventListener('click', () => { setActive(el); sendMessage(q); });
+    qqList.appendChild(el);
+  });
+
+  // Teams
+  const tList = document.getElementById('team-list');
+  TEAMS.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'sidebar-item';
+    el.innerHTML = `<span class="team-dot" style="background:${t.color}"></span><span>${t.name}</span><span style="font-size:10px;color:var(--muted);margin-left:auto;flex-shrink:0">${t.engine}</span>`;
+    const q = `Analyse ${t.name}'s 2026 season prospects. Drivers: ${t.drivers.join(' and ')}, powered by ${t.engine}. Predict their final constructors' championship position, likely points total, key race circuits that suit them, team strengths and weaknesses, and whether they can realistically challenge for the titles.`;
+    el.addEventListener('click', () => { setActive(el); sendMessage(q); });
+    tList.appendChild(el);
+  });
+
+  // Races
+  const rList = document.getElementById('race-list');
+  CALENDAR.forEach(([code, name]) => {
+    const el = document.createElement('div');
+    el.className = 'sidebar-item';
+    el.innerHTML = `<span class="race-code">${code}</span><span>${name}</span>`;
+    const q = `Predict the 2026 ${name} Grand Prix (${code}). Cover: pole position, race winner, full podium prediction, key strategic battles, likely safety car scenarios, and any potential upsets or dark horse performers.`;
+    el.addEventListener('click', () => { setActive(el); sendMessage(q); });
+    rList.appendChild(el);
+  });
+}
+
+function setActive(el) {
+  if (activeItem) activeItem.classList.remove('active');
+  activeItem = el;
+  el.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CHAT UI
+// ═══════════════════════════════════════════════════════════════
+function showWelcome() {
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = '';
+  const w = document.createElement('div');
+  w.className = 'welcome';
+  w.innerHTML = `
+    <h2>🏎 F1 2026 SEASON PREDICTOR</h2>
+    <p>Season opens <strong>March 8 — Melbourne, Australia</strong>.<br>
+    24 races · 11 teams · 22 drivers · Complete regulation reset.<br><br>
+    New power units, active aero, two brand-new teams, and Lewis Hamilton in red.<br>
+    Ask me anything — or pick a topic from the sidebar.</p>
+  `;
+  msgs.appendChild(w);
+}
+
+function newChat() {
+  conversation = [];
+  if (activeItem) { activeItem.classList.remove('active'); activeItem = null; }
+  showWelcome();
+}
+
+function appendUserBubble(text) {
+  const msgs = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap user';
+  const label = document.createElement('div');
+  label.className = 'msg-label';
+  label.textContent = 'YOU';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble user';
+  bubble.textContent = text;
+  wrap.appendChild(label);
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  scrollBottom();
+}
+
+function appendAIBubble() {
+  const msgs = document.getElementById('messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-wrap ai';
+  const label = document.createElement('div');
+  label.className = 'msg-label ai';
+  label.textContent = 'CLAUDE AI';
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble ai streaming';
+  wrap.appendChild(label);
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  scrollBottom();
+  return bubble;
+}
+
+function scrollBottom() {
+  const msgs = document.getElementById('messages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  API STREAMING
+// ═══════════════════════════════════════════════════════════════
+async function sendMessage(text) {
+  if (isStreaming || !text.trim()) return;
+  isStreaming = true;
+
+  const inputEl = document.getElementById('chat-input');
+  const askBtn  = document.getElementById('ask-btn');
+  inputEl.disabled = true;
+  askBtn.disabled  = true;
+
+  appendUserBubble(text);
+  conversation.push({ role: 'user', content: text });
+
+  const aiBubble = appendAIBubble();
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        stream: true,
+        system: SYSTEM_PROMPT,
+        messages: conversation,
+      }),
+    });
+
+    if (!response.ok) {
+      let errMsg = `API error ${response.status}`;
+      try {
+        const errBody = await response.json();
+        errMsg = errBody.error?.message || errMsg;
+      } catch (e) { /* ignore */ }
+      aiBubble.classList.remove('streaming');
+      aiBubble.textContent = `⚠ ${errMsg}`;
+      if (response.status === 401) {
+        aiBubble.textContent += '\n\nInvalid API key. Reloading in 2s...';
+        setTimeout(() => { sessionStorage.removeItem('f1_api_key'); location.reload(); }, 2000);
+      }
+      return;
+    }
+
+    const reader  = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullResponse = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      // SSE events are delimited by double newlines
+      const events = buffer.split('\n\n');
+      buffer = events.pop(); // keep any partial trailing event
+
+      for (const event of events) {
+        let dataLine = null;
+        for (const line of event.split('\n')) {
+          if (line.startsWith('data: ')) dataLine = line.slice(6).trim();
+        }
+        if (!dataLine || dataLine === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(dataLine);
+          if (parsed.type === 'error') {
+            throw new Error(parsed.error?.message || 'Stream error');
+          }
+          if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
+            const chunk = parsed.delta.text;
+            fullResponse += chunk;
+            aiBubble.textContent += chunk;
+            scrollBottom();
+          }
+        } catch (e) {
+          if (e.message !== 'Stream error') { /* ignore JSON parse noise */ }
+          else throw e;
+        }
+      }
+    }
+
+    aiBubble.classList.remove('streaming');
+    conversation.push({ role: 'assistant', content: fullResponse });
+
+  } catch (err) {
+    aiBubble.classList.remove('streaming');
+    aiBubble.textContent = `⚠ ${err.message}`;
+  } finally {
+    isStreaming = false;
+    inputEl.disabled = false;
+    askBtn.disabled  = false;
+    inputEl.focus();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  APP STARTUP
+// ═══════════════════════════════════════════════════════════════
+function startApp() {
+  document.getElementById('api-modal').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+
+  initThreeJS();
+  populateSidebar();
+  showWelcome();
+
+  // Input handlers
+  document.getElementById('ask-btn').addEventListener('click', () => {
+    const inp = document.getElementById('chat-input');
+    const text = inp.value.trim();
+    if (text) { inp.value = ''; sendMessage(text); }
+  });
+
+  document.getElementById('chat-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const text = e.target.value.trim();
+      if (text) { e.target.value = ''; sendMessage(text); }
+    }
+  });
+
+  document.getElementById('new-chat-btn').addEventListener('click', newChat);
+}
+
+// API key modal handlers
+document.getElementById('api-key-btn').addEventListener('click', () => {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) {
+    document.getElementById('api-key-input').classList.add('invalid');
+    setTimeout(() => document.getElementById('api-key-input').classList.remove('invalid'), 500);
+    return;
+  }
+  apiKey = key;
+  sessionStorage.setItem('f1_api_key', key);
+  startApp();
+});
+
+document.getElementById('api-key-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('api-key-btn').click();
+});
+
+// Auto-start if key already stored in this session
+if (apiKey) startApp();
+</script>
+</body>
+</html>
