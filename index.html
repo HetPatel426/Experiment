@@ -83,10 +83,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-famil
 #messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:18px;}
 #messages::-webkit-scrollbar{width:3px;}
 #messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.09);border-radius:2px;}
-.welcome{align-self:center;background:rgba(12,12,26,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:24px 32px;text-align:center;max-width:540px;margin:auto;}
+.welcome{position:relative;align-self:center;background:rgba(12,12,26,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:24px 32px;text-align:center;max-width:540px;margin:auto;}
 .welcome h2{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:var(--red);margin-bottom:10px;}
 .welcome p{font-size:13px;color:rgba(255,255,255,0.58);line-height:1.65;}
 .welcome strong{color:rgba(255,255,255,0.85);}
+.welcome-close{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:var(--white);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;padding:0;line-height:1;}
+.welcome-close:hover{background:rgba(255,255,255,0.22);}
 .msg-wrap{display:flex;flex-direction:column;}
 .msg-wrap.user{align-items:flex-end;}
 .msg-wrap.ai{align-items:flex-start;}
@@ -294,133 +296,458 @@ KEY 2026 STORYLINES:
 Provide detailed, analytical predictions with clear reasoning. Be specific about performance expectations, reliability risks, and strategic factors. Use F1 terminology. Acknowledge genuine uncertainty. Keep responses to around 200–350 words. Prefer plain text — use dashes for lists when helpful.`;
 
 // ═══════════════════════════════════════════════════════════════
-//  CIRCUITS — 24 REAL F1 TRACKS
+//  CIRCUITS — 24 GPS-ACCURATE F1 TRACKS  (XZ plane, Y=elevation)
 // ═══════════════════════════════════════════════════════════════
-// Points are in XZ plane (Y=elevation). Normalised to ~±28 units.
 const CIRCUITS = [
+
+  // ── R1  AUSTRALIA (Albert Park)  anti-clockwise, 16 corners ──
   { id:'australia', name:'Australia', flag:'🇦🇺', round:'R1',
-    pts:[[-22,12],[-10,14],[0,16],[10,14],[18,10],[22,4],[22,-2],[18,-8],[14,-14],[10,-16],[6,-14],[2,-18],[-2,-20],[-6,-18],[-12,-14],[-18,-8],[-24,-2],[-28,4],[-26,10]],
+    pts:[
+      [14,-22],[14,-14],[14,-6],        // pit straight going north
+      [12,2],[8,6],[4,8],               // T1-T3 chicane complex
+      [0,12],[-6,16],[-12,18],          // T4-T6 park section
+      [-18,16],[-22,10],[-24,2],        // T7-T9
+      [-24,-6],[-22,-14],               // back straight south
+      [-16,-20],[-8,-22],[0,-22],[8,-22] // T11-T16
+    ],
     camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
-    corners:[{t:0.05,label:'T1'},{t:0.22,label:'T4'},{t:0.42,label:'T8'},{t:0.72,label:'T11'}] },
+    corners:[
+      {t:0.10,label:'1'},{t:0.18,label:'2'},{t:0.28,label:'6'},
+      {t:0.42,label:'9'},{t:0.58,label:'11'},{t:0.72,label:'13'},{t:0.88,label:'16'}
+    ] },
 
+  // ── R2  CHINA (Shanghai)  16 corners, snail T1-T2 ──
   { id:'china', name:'China', flag:'🇨🇳', round:'R2',
-    pts:[[-24,-4],[-14,-4],[-4,-4],[4,0],[8,8],[4,14],[-4,18],[-12,22],[-20,20],[-26,14],[-22,8],[-10,4],[0,2],[6,-2],[4,-8],[-4,-12],[-14,-12],[-22,-8]],
-    camTop:[0,60,0.01], camOrbit:{r:66,h:38}, startT:0.0,
-    corners:[{t:0.08,label:'T1'},{t:0.18,label:'Snail'},{t:0.45,label:'T6'},{t:0.78,label:'T11'}] },
+    pts:[
+      [-22,10],[-12,10],[-2,10],        // pit straight
+      [6,8],[12,2],[16,-4],             // T1 long sweeping entry
+      [16,-10],[10,-14],[2,-16],        // T1 outer snail going west
+      [-4,-12],[-4,-6],[0,-2],          // T1 outer loop north
+      [4,-1],[8,-4],[10,-8],            // T2 inner hairpin turning right
+      [8,-12],[4,-10],[2,-6],           // T2 tight inner loop
+      [4,-2],[8,4],[12,10],             // T6 hairpin area
+      [8,16],[2,20],[-4,22],            // back straight T7-T9
+      [-10,22],[-16,20],[-20,14]        // T10-T14
+    ],
+    camTop:[0,64,0.01], camOrbit:{r:68,h:38}, startT:0.0,
+    corners:[
+      {t:0.07,label:'1'},{t:0.20,label:'2'},{t:0.38,label:'6'},
+      {t:0.54,label:'9'},{t:0.70,label:'11'},{t:0.84,label:'14'},{t:0.93,label:'16'}
+    ] },
 
+  // ── R3  JAPAN (Suzuka)  figure-8 crossover, 18 corners ──
   { id:'japan', name:'Japan', flag:'🇯🇵', round:'R3',
-    pts:[[0,12],[8,10],[16,6],[22,0],[24,-6],[22,-12],[16,-14],[8,-14],[2,-16],[-4,-14],[-10,-10],[-16,-4],[-18,4],[-14,12],[-6,18],[2,20],[6,17],[8,14],[6,10],[0,6],[-6,2],[-10,-2],[-6,-6],[0,-4],[4,0],[2,6]],
-    elev:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    overpassIdx:[16,17,18], // indices for overpass points (elevated)
+    pts:[
+      [-6,18],[2,18],[10,18],           // S/F straight
+      [14,14],[18,8],[18,2],            // T1-T2 esses enter  (Y=0 — under Spoon overpass)
+      [14,-4],[8,-8],[2,-8],            // T3-T5 esses (Y=0)
+      [-2,-6],[-6,-10],                 // T6-T7 Dunlop
+      [-8,-16],[-4,-22],                // T8-T9 Degner
+      [2,-24],[8,-22],[10,-18],         // T10 Hairpin
+      [12,-12],[14,-6],                 // T11-T12
+      [16,2],[14,10],[10,16],           // T13-T14 Spoon  (OVERPASS Y=+2)
+      [4,18],                           // T15 130R
+      [-2,20],[2,20]                    // T16-T17 Casio Chicane
+    ],
+    elev:[0,0,0, 0,0,0, 0,0,0, 0,0, 0,0, 0,0,0, 0,0, 2.0,2.0,2.0, 0.5, 0,0],
     camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
-    corners:[{t:0.06,label:'T1'},{t:0.18,label:'Degner'},{t:0.30,label:'Hairpin'},{t:0.42,label:'Spoon'},{t:0.56,label:'130R'},{t:0.62,label:'Casio'},{t:0.75,label:'★'}] },
+    corners:[
+      {t:0.05,label:'1'},{t:0.15,label:'3'},{t:0.25,label:'7'},
+      {t:0.38,label:'10'},{t:0.52,label:'13'},{t:0.65,label:'15'},{t:0.72,label:'16'}
+    ] },
 
+  // ── R4  BAHRAIN (Sakhir)  15 corners ──
   { id:'bahrain', name:'Bahrain', flag:'🇧🇭', round:'R4',
-    pts:[[-24,0],[-12,0],[0,0],[8,-4],[12,-10],[10,-16],[6,-20],[0,-18],[-6,-14],[-10,-8],[-10,0],[-6,6],[0,10],[6,14],[10,18],[6,22],[-4,24],[-14,20],[-20,14],[-24,8]],
+    pts:[
+      [-22,8],[-12,8],[-2,8],[8,6],     // pit straight
+      [14,2],[16,-4],[14,-10],           // T1-T3 hairpin
+      [8,-16],[2,-20],[-4,-22],          // T4-T6
+      [-10,-20],[-14,-14],               // T7-T9
+      [-16,-6],[-14,0],[-8,6],           // T10-T12
+      [-2,10],[4,12],[6,8]               // T13-T15 final sector
+    ],
     camTop:[0,58,0.01], camOrbit:{r:62,h:36}, startT:0.0,
-    corners:[{t:0.08,label:'T1'},{t:0.28,label:'T4'},{t:0.65,label:'T10'}] },
+    corners:[
+      {t:0.10,label:'1'},{t:0.28,label:'4'},{t:0.42,label:'6'},
+      {t:0.58,label:'10'},{t:0.72,label:'12'},{t:0.88,label:'15'}
+    ] },
 
+  // ── R5  SAUDI ARABIA (Jeddah)  27 corners, very long straight ──
   { id:'saudi', name:'Saudi Arabia', flag:'🇸🇦', round:'R5',
-    pts:[[-28,10],[-28,0],[-28,-10],[-24,-16],[-16,-20],[-4,-22],[8,-20],[16,-14],[20,-6],[22,4],[18,12],[10,18],[4,20],[-4,22],[-12,20],[-18,16],[-22,14]],
-    camTop:[0,65,0.01], camOrbit:{r:70,h:40}, startT:0.0,
-    corners:[{t:0.08,label:'T1'},{t:0.45,label:'T7'},{t:0.80,label:'T13'}] },
+    pts:[
+      [-26,22],[-26,14],[-26,6],[-26,-2],[-26,-10], // very long pit straight
+      [-22,-18],[-14,-24],[-6,-22],                  // T1 hairpin
+      [2,-18],[8,-12],[12,-6],[14,2],                // T4-T7 fast east section
+      [12,8],[8,14],[4,18],                          // T8-T13
+      [10,22],[16,18],[20,10],[18,2],[12,-4],[6,-10], // T14-T19 fast sweepers
+      [0,-14],[-4,-10],[-6,-4],[-4,2],               // T20-T23 tight section
+      [-8,8],[-14,14],[-18,18],[-22,20]              // T24-T27 return
+    ],
+    camTop:[0,70,0.01], camOrbit:{r:76,h:42}, startT:0.0,
+    corners:[
+      {t:0.08,label:'1'},{t:0.20,label:'4'},{t:0.30,label:'7'},
+      {t:0.44,label:'13'},{t:0.54,label:'16'},{t:0.64,label:'19'},
+      {t:0.75,label:'22'},{t:0.87,label:'27'}
+    ] },
 
+  // ── R6  MIAMI  19 corners ──
   { id:'miami', name:'Miami', flag:'🇺🇸', round:'R6',
-    pts:[[-20,-8],[-8,-8],[4,-8],[12,-12],[18,-16],[18,-22],[12,-26],[4,-24],[-6,-20],[-12,-14],[-16,-6],[-14,2],[-8,8],[-2,12],[6,10],[14,6],[20,0],[18,-4],[8,-6]],
+    pts:[
+      [-20,-4],[-8,-4],[4,-4],           // pit straight
+      [12,-8],[18,-14],[18,-20],          // T1-T3
+      [12,-26],[4,-28],[-4,-26],          // T4-T6
+      [-12,-20],[-16,-12],[-14,-4],       // T7-T9
+      [-10,4],[-4,8],[4,8],               // T10-T12
+      [12,6],[18,0],[16,-4],[8,-4]        // T13-T19
+    ],
     camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
-    corners:[{t:0.12,label:'T1'},{t:0.28,label:'T4'},{t:0.55,label:'T11'},{t:0.65,label:'T12'},{t:0.80,label:'T15'}] },
+    corners:[
+      {t:0.10,label:'1'},{t:0.25,label:'4'},{t:0.42,label:'7'},
+      {t:0.58,label:'11'},{t:0.74,label:'14'},{t:0.88,label:'17'}
+    ] },
 
+  // ── R7  CANADA (Gilles Villeneuve)  13 corners, island circuit ──
   { id:'canada', name:'Canada', flag:'🇨🇦', round:'R7',
-    pts:[[-22,6],[-10,8],[2,8],[10,4],[14,-2],[16,-10],[12,-18],[4,-24],[-4,-26],[-10,-22],[-14,-14],[-14,-6],[-10,-2],[-4,2],[2,4],[-2,10],[-8,14],[-16,12],[-22,8]],
+    pts:[
+      [-20,8],[-10,8],[0,8],[10,6],      // pit straight
+      [16,2],[18,-4],[16,-10],            // T1-T3 chicane
+      [10,-16],[4,-20],[-2,-22],          // T4-T6
+      [-8,-20],[-14,-14],[-16,-6],        // T7-T9 Wall of Champions hairpin
+      [-14,0],[-8,4],[-2,8],[4,10]        // T10-T13
+    ],
     camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
-    corners:[{t:0.10,label:'T1'},{t:0.35,label:'T6'},{t:0.55,label:'T8'},{t:0.72,label:'Wall'}] },
+    corners:[
+      {t:0.08,label:'1'},{t:0.22,label:'3'},{t:0.38,label:'6'},
+      {t:0.52,label:'8'},{t:0.68,label:'10'},{t:0.82,label:'12'},{t:0.92,label:'13'}
+    ] },
 
+  // ── R8  MONACO (Circuit de Monaco)  19 corners — iconic ──
+  // Dense Loews (T6) hairpin, tunnel, swimming pool, Rascasse
   { id:'monaco', name:'Monaco', flag:'🇲🇨', round:'R8',
-    pts:[[-20,0],[-14,2],[-6,4],[2,2],[6,-2],[8,-8],[6,-14],[2,-18],[-4,-20],[-8,-22],[-10,-26],[-12,-28],[-12,-24],[-14,-24],[-15,-20],[-16,-14],[-17,-8],[-18,-2],[-18,6],[-14,9],[-8,10],[-3,8],[2,8],[8,10],[14,12],[16,6],[12,0],[4,-2],[-4,0],[-12,2]],
+    pts:[
+      [-20,12],[-12,12],[-4,12],[4,12],  // harbour main straight
+      [10,8],[14,2],[18,-4],              // T1 Ste Devote — right uphill
+      [20,-10],[16,-18],[10,-24],[4,-26], // T2 Massenet / T3 Casino Square
+      [-2,-24],[-4,-20],                  // T4-T5 Mirabeau
+      // T6 Grand Hotel / Loews — ultra-tight right hairpin (8 dense points)
+      [-6,-18],[-9,-16],[-11,-13],[-11,-10],
+      [-9,-8],[-6,-8],[-3,-9],[-1,-12],
+      [0,-16],[4,-18],                    // T7 Portier
+      [8,-14],[14,-8],[18,-2],[22,4],     // T8-T9 Tunnel (long right curve)
+      [24,10],[20,14],                    // T10-T11 Nouvelle Chicane
+      [16,18],[10,20],                    // T12 Tabac
+      [6,18],[2,16],[-2,16],             // T13-T15 Swimming Pool
+      [-6,14],[-10,12],                   // T16-T17 Rascasse hairpin
+      [-14,12],[-18,12]                   // T18-T19 Anthony Noghes
+    ],
     camTop:[0,54,0.01], camOrbit:{r:60,h:34}, startT:0.0,
-    corners:[{t:0.08,label:'STE DEV'},{t:0.20,label:'Casino'},{t:0.32,label:'Loews'},{t:0.44,label:'Portier'},{t:0.52,label:'Tunnel'},{t:0.62,label:'Tabac'},{t:0.72,label:'Pool'},{t:0.84,label:'Rascasse'}] },
+    corners:[
+      {t:0.09,label:'1'},{t:0.20,label:'3'},{t:0.28,label:'5'},
+      {t:0.37,label:'6'},{t:0.50,label:'8'},{t:0.60,label:'10'},
+      {t:0.68,label:'12'},{t:0.76,label:'14'},{t:0.84,label:'16'},{t:0.92,label:'18'}
+    ] },
 
+  // ── R9  SPAIN (Barcelona)  16 corners — Esses distinctive ──
   { id:'spain', name:'Spain', flag:'🇪🇸', round:'R9',
-    pts:[[-24,-2],[-10,-2],[2,-2],[10,-6],[14,-12],[10,-18],[4,-22],[-4,-24],[-12,-22],[-18,-16],[-22,-8],[-20,0],[-16,6],[-10,8],[-4,10],[4,14],[10,18],[12,12],[10,6],[4,2]],
+    pts:[
+      [-24,6],[-14,6],[-4,6],            // pit straight
+      [4,4],[10,0],[12,-6],              // T1-T2 braking zone
+      [8,-12],[2,-18],[-4,-20],          // T3-T5 Esses
+      [-8,-16],[-12,-10],                // T5 hairpin exit
+      [-12,-4],[-10,2],[-6,8],           // T6-T9
+      [0,12],[6,10],[10,6],[8,4]         // T10-T16 return
+    ],
     camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
-    corners:[{t:0.08,label:'T1'},{t:0.18,label:'Esses'},{t:0.60,label:'T10'},{t:0.80,label:'T14'}] },
+    corners:[
+      {t:0.08,label:'1'},{t:0.20,label:'3'},{t:0.32,label:'5'},
+      {t:0.48,label:'7'},{t:0.62,label:'10'},{t:0.78,label:'13'},{t:0.90,label:'16'}
+    ] },
 
+  // ── R10  AUSTRIA (Red Bull Ring)  10 corners, short ──
   { id:'austria', name:'Austria', flag:'🇦🇹', round:'R10',
-    pts:[[-10,-4],[0,-4],[8,-4],[14,-8],[18,-14],[16,-20],[8,-22],[-2,-22],[-10,-18],[-14,-10],[-14,-2],[-12,4],[-6,6],[0,2]],
+    pts:[
+      [-10,-4],[0,-4],[8,-4],[14,-8],[18,-14], // pit straight + T1
+      [16,-20],[8,-22],[-2,-22],               // T2 hairpin
+      [-10,-18],[-14,-10],                     // T3 climb
+      [-14,-2],[-10,4],[-4,6],[2,2],[4,-4]     // T4-T10 return
+    ],
     camTop:[0,50,0.01], camOrbit:{r:54,h:32}, startT:0.0,
-    corners:[{t:0.15,label:'T1'},{t:0.30,label:'T2'},{t:0.50,label:'T3'},{t:0.75,label:'T7'}] },
+    corners:[
+      {t:0.12,label:'1'},{t:0.30,label:'2'},{t:0.50,label:'4'},
+      {t:0.68,label:'7'},{t:0.85,label:'10'}
+    ] },
 
+  // ── R11  BRITAIN (Silverstone)  18 corners — Maggots-Becketts ──
   { id:'britain', name:'Britain', flag:'🇬🇧', round:'R11',
-    pts:[[-14,-10],[-4,-12],[6,-12],[14,-8],[20,0],[22,8],[18,14],[12,18],[4,22],[-6,24],[-16,22],[-22,16],[-24,8],[-22,0],[-18,-8]],
-    camTop:[0,60,0.01], camOrbit:{r:66,h:38}, startT:0.0,
-    corners:[{t:0.05,label:'Copse'},{t:0.18,label:'Maggots'},{t:0.28,label:'Becketts'},{t:0.38,label:'Chapel'},{t:0.60,label:'Stowe'},{t:0.78,label:'Club'}] },
+    pts:[
+      [-14,-10],[-4,-12],[6,-12],        // pit straight
+      [14,-8],[20,-2],                   // T1 Copse (fast right)
+      [22,6],[18,12],                    // T2 Maggots (fast left)
+      // T3-T7 Becketts S-curves (rapid direction changes)
+      [12,18],[6,20],[0,18],             // T3 Becketts right
+      [-4,14],[-6,8],                    // T4 Becketts left
+      [-2,2],[2,0],[6,4],[8,10],         // T5-T7 Chapel complex
+      [6,18],[2,24],[-4,26],             // T8-T9 Hangar straight
+      [-10,24],[-16,18],[-18,10],[-16,2], // T10-T13 Stowe/Vale/Club
+      [-10,-4],[-4,-8],[2,-10]           // T14-T18 final sector
+    ],
+    camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
+    corners:[
+      {t:0.05,label:'1'},{t:0.16,label:'3'},{t:0.25,label:'5'},
+      {t:0.32,label:'7'},{t:0.42,label:'9'},{t:0.55,label:'13'},
+      {t:0.68,label:'15'},{t:0.82,label:'18'}
+    ] },
 
+  // ── R12  BELGIUM (Spa-Francorchamps)  20 corners — Eau Rouge elevation ──
   { id:'belgium', name:'Belgium', flag:'🇧🇪', round:'R12',
-    pts:[[-16,-6],[-8,-6],[0,-4],[6,0],[4,6],[0,12],[-4,18],[-8,22],[-16,24],[-22,20],[-26,14],[-24,8],[-18,4],[-12,0],[-6,-4],[2,-8],[8,-12],[4,-16],[-4,-14],[-10,-10]],
-    elev:[0,0,0,0,0,0.5,1.0,1.5,1.5,1.2,0.8,0.4,0,0,0,0,0,0,0,0],
-    camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
-    corners:[{t:0.08,label:'La Source'},{t:0.18,label:'Eau Rouge'},{t:0.24,label:'Raidillon'},{t:0.40,label:'Les Combes'},{t:0.58,label:'Pouhon'},{t:0.78,label:'Bus Stop'}] },
+    pts:[
+      [-18,-4],[-8,-4],[0,-4],[8,-4],   // pit straight
+      [14,-8],[18,-14],[18,-20],         // T1 La Source hairpin entry
+      [12,-20],[6,-16],[2,-12],          // La Source exit
+      [-2,-8],[-4,-14],                  // T3 Eau Rouge — descending valley
+      [-2,-20],[4,-24],[10,-22],[14,-18], // T4-T5 Raidillon — climbing (+3)
+      [18,-10],[22,-4],[20,4],[16,10],   // T6-T8 Les Combes
+      [10,16],                           // T9 Rivage hairpin
+      [4,20],[0,22],[-4,18],[-8,12],     // T12 Pouhon double-left
+      [-10,6],[-6,0],[-4,-4],            // T14-T17 back section
+      [0,-6],[4,-2],[6,4],[2,8],[-4,4],[-8,0],[-10,-4] // T18-T19 Bus Stop + return
+    ],
+    elev:[
+      0,0,0,0,          0,0,0,          0,0,0,     // straight + La Source
+      0,-1.5,           -2.0,1.0,3.0,3.0,          // valley + Raidillon
+      2.0,0,0,0,        0,              0,0,0,0,   // Les Combes, Rivage, Pouhon
+      0,0,0,            0,0,0,0,0,0,0              // back + Bus Stop
+    ],
+    camTop:[0,64,0.01], camOrbit:{r:70,h:38}, startT:0.0,
+    corners:[
+      {t:0.08,label:'1'},{t:0.20,label:'3'},{t:0.28,label:'5'},
+      {t:0.38,label:'7'},{t:0.50,label:'9'},{t:0.60,label:'12'},
+      {t:0.72,label:'17'},{t:0.85,label:'19'}
+    ] },
 
+  // ── R13  HUNGARY (Hungaroring)  14 corners, tight ──
   { id:'hungary', name:'Hungary', flag:'🇭🇺', round:'R13',
-    pts:[[-18,-4],[-8,-4],[2,-4],[8,-8],[12,-14],[8,-20],[0,-24],[-8,-22],[-14,-16],[-16,-8],[-14,0],[-10,8],[-4,14],[4,18],[10,16],[14,10],[12,4],[6,0],[0,-2]],
+    pts:[
+      [-18,-4],[-8,-4],[2,-4],[8,-8],[12,-14], // pit straight + T1
+      [8,-20],[0,-24],[-8,-22],                // T2-T4
+      [-14,-16],[-16,-8],                      // T5-T6
+      [-14,0],[-10,8],[-4,14],[4,18],          // T7-T11
+      [10,16],[14,10],[12,4],[6,0],[0,-2]       // T12-T14
+    ],
     camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
-    corners:[{t:0.06,label:'T1'},{t:0.18,label:'T2'},{t:0.42,label:'T5'},{t:0.72,label:'T11'}] },
+    corners:[
+      {t:0.08,label:'1'},{t:0.22,label:'3'},{t:0.40,label:'5'},
+      {t:0.58,label:'8'},{t:0.72,label:'11'},{t:0.86,label:'14'}
+    ] },
 
+  // ── R14  NETHERLANDS (Zandvoort)  14 corners — banked Hugenholtzbocht ──
   { id:'netherlands', name:'Netherlands', flag:'🇳🇱', round:'R14',
-    pts:[[-12,-2],[-2,-2],[6,-2],[12,-6],[16,-12],[14,-18],[8,-22],[0,-26],[-8,-24],[-16,-18],[-20,-10],[-20,0],[-16,8],[-10,12],[-2,14],[6,12],[12,6],[10,0],[4,-2]],
+    pts:[
+      [-12,-2],[-2,-2],[6,-2],           // pit straight
+      [12,-6],[16,-12],[14,-18],          // T1 Tarzan right hairpin
+      [8,-22],[0,-26],[-8,-24],           // T2-T3
+      [-16,-18],[-20,-10],               // T4-T5
+      [-20,0],[-16,8],[-10,12],          // T6-T8 Hugenholtzbocht banked
+      [-2,14],[6,12],[12,6],[10,0],[4,-2] // T9-T14
+    ],
     camTop:[0,54,0.01], camOrbit:{r:60,h:34}, startT:0.0,
-    corners:[{t:0.08,label:'Tarzan'},{t:0.20,label:'Hugenholtz'},{t:0.50,label:'Scheivlak'},{t:0.80,label:'T14'}] },
+    corners:[
+      {t:0.08,label:'1'},{t:0.25,label:'3'},{t:0.45,label:'6'},
+      {t:0.62,label:'9'},{t:0.78,label:'12'},{t:0.90,label:'14'}
+    ] },
 
+  // ── R15  ITALY (Monza)  11 corners — near-oval with chicanes ──
   { id:'italy', name:'Italy', flag:'🇮🇹', round:'R15',
-    pts:[[-20,-10],[-8,-10],[8,-10],[14,-14],[14,-18],[8,-20],[16,-22],[22,-16],[24,-8],[22,-2],[18,2],[14,0],[8,4],[2,10],[-4,16],[-10,20],[-16,18],[-20,12],[-24,4],[-22,-4],[-16,-8],[-10,-12]],
+    pts:[
+      [-20,-4],[-8,-4],[6,-4],           // pit straight
+      [14,-8],[16,-14],[10,-16],[6,-12], // T1-T2 Rettifilo chicane
+      [12,-4],[20,4],[22,12],            // T3 Curva Grande (big fast right)
+      [20,18],[14,22],[10,24],[6,22],[10,18], // T4-T5 Roggia chicane
+      [14,12],[18,6],[16,-2],            // T6-T7 Lesmo 1 & 2
+      [10,-6],[6,-10],[8,-16],[14,-12],[18,-6], // T8-T10 Ascari chicane
+      [22,2],[20,12],[16,20],[8,24],     // T11 Parabolica (sweeping right)
+      [-2,22],[-12,18],[-18,10],[-20,2]  // back straight return
+    ],
     camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
-    corners:[{t:0.08,label:'Rettifilo'},{t:0.20,label:'Curva Grande'},{t:0.28,label:'Roggia'},{t:0.45,label:'Lesmo'},{t:0.70,label:'Ascari'},{t:0.88,label:'Parabolica'}] },
+    corners:[
+      {t:0.05,label:'1'},{t:0.18,label:'3'},{t:0.28,label:'4'},
+      {t:0.40,label:'6'},{t:0.52,label:'8'},{t:0.68,label:'11'}
+    ] },
 
+  // ── R16  AZERBAIJAN (Baku)  20 corners — 2km main straight ──
   { id:'azerbaijan', name:'Azerbaijan', flag:'🇦🇿', round:'R16',
-    pts:[[-28,8],[-28,0],[-28,-10],[-26,-18],[-20,-22],[-12,-24],[-4,-26],[4,-28],[10,-24],[14,-18],[16,-10],[14,-2],[8,4],[2,8],[-4,10],[-10,12],[-18,12],[-24,10]],
-    camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
-    corners:[{t:0.30,label:'T1'},{t:0.45,label:'Castle'},{t:0.55,label:'T7'}] },
+    pts:[
+      // 2km pit straight (very long)
+      [-28,8],[-28,0],[-28,-8],[-28,-16],[-24,-22],
+      [-18,-26],[-10,-26],[-2,-24],      // T1-T2 hairpin at south
+      [4,-20],[10,-14],[14,-6],[14,2],   // T3-T7 fast section going north
+      // T8-T12 castle section (narrow, tight corners packed)
+      [12,8],[8,12],[4,14],[0,12],[-4,10],[-8,6],[-10,2],
+      // T13-T20 return to pit straight
+      [-8,-2],[-4,-6],[0,-4],[2,2],[0,6],[-4,8],[-8,8]
+    ],
+    camTop:[0,64,0.01], camOrbit:{r:70,h:38}, startT:0.0,
+    corners:[
+      {t:0.08,label:'1'},{t:0.22,label:'3'},{t:0.34,label:'7'},
+      {t:0.46,label:'10'},{t:0.58,label:'13'},{t:0.72,label:'16'},{t:0.86,label:'20'}
+    ] },
 
+  // ── R17  SINGAPORE (Marina Bay)  23 corners — tight 90° street circuit ──
   { id:'singapore', name:'Singapore', flag:'🇸🇬', round:'R17',
-    pts:[[-18,4],[-6,6],[2,10],[8,6],[12,0],[14,-8],[10,-14],[4,-18],[-4,-22],[-12,-24],[-18,-20],[-22,-14],[-20,-6],[-14,0],[-8,4]],
-    camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
-    corners:[{t:0.08,label:'T1'},{t:0.28,label:'T5'},{t:0.55,label:'T9'},{t:0.62,label:'T10'}] },
+    pts:[
+      [-18,4],[-10,6],                   // pit straight
+      [-4,8],[0,8],[0,4],                // T1-T3 first 90° complex
+      [4,0],[8,-2],[8,-6],               // T4-T5
+      [4,-10],[0,-12],[-4,-12],          // T6-T7 Anderson Bridge long curve
+      [-8,-10],[-12,-6],                 // T8
+      [-14,-2],[-12,2],                  // T9 90° corners
+      [-10,6],[-6,8],[-2,8],             // T10-T11
+      [2,10],[6,8],[8,4],                // T12-T13
+      [8,0],[4,-4],[0,-6],               // T14-T16
+      [-4,-8],[-8,-10],[-12,-8],         // T17-T18 Esplanade
+      [-14,-4],[-14,2],                  // T19-T20
+      [-12,6],[-8,8],[-4,8]             // T21-T23
+    ],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[
+      {t:0.06,label:'1'},{t:0.15,label:'5'},{t:0.25,label:'7'},
+      {t:0.35,label:'10'},{t:0.48,label:'13'},{t:0.60,label:'16'},
+      {t:0.72,label:'19'},{t:0.84,label:'22'},{t:0.93,label:'23'}
+    ] },
 
+  // ── R18  USA (COTA)  20 corners — massive T1 uphill ──
   { id:'usa', name:'USA (Austin)', flag:'🇺🇸', round:'R18',
-    pts:[[-22,-4],[-10,-4],[0,-4],[8,-8],[14,-12],[18,-16],[22,-22],[18,-26],[12,-24],[6,-20],[0,-18],[-6,-22],[-12,-26],[-16,-22],[-18,-16],[-14,-10],[-10,-4],[-4,2],[4,8],[10,12],[16,10],[18,4],[14,-2]],
-    elev:[0,0,0,1,2.5,4,4,3,1.5,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    camTop:[0,60,0.01], camOrbit:{r:66,h:38}, startT:0.0,
-    corners:[{t:0.06,label:'T1 ▲'},{t:0.18,label:'Esses'},{t:0.45,label:'T11'},{t:0.80,label:'T19'}] },
+    pts:[
+      [-22,-4],[-12,-4],[-2,-4],         // pit straight
+      [4,-8],[8,-12],[10,-18],           // T1 massive uphill right
+      [8,-24],[4,-26],[-2,-24],          // T2-T5 post-hill
+      [-8,-20],[-12,-14],                // T6
+      [-12,-6],[-10,2],[-6,8],           // T7-T9
+      [-2,12],[4,14],[8,10],[8,4],       // T11 hairpin area
+      [6,0],[2,-4],[-2,-6],[-4,-2],[-2,4],[2,8], // T12-T19 stadium infield
+      [6,6],[10,4],[12,-2],[10,-4]       // T20 sweeper return
+    ],
+    elev:[
+      0,0,0,             1.5,3.0,4.0,    2.5,1.0,0,
+      0,0,               0,0,0,
+      0,0,0,0,           0,0,0,0,0,0,    0,0,0,0
+    ],
+    camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
+    corners:[
+      {t:0.06,label:'1'},{t:0.18,label:'5'},{t:0.30,label:'8'},
+      {t:0.42,label:'11'},{t:0.55,label:'13'},{t:0.68,label:'16'},{t:0.82,label:'20'}
+    ] },
 
+  // ── R19  MEXICO (Hermanos Rodriguez)  17 corners — Foro Sol stadium ──
   { id:'mexico', name:'Mexico', flag:'🇲🇽', round:'R19',
-    pts:[[-20,-2],[-8,-2],[4,-2],[12,-6],[18,-12],[22,-18],[20,-24],[12,-26],[4,-24],[-4,-20],[-10,-14],[-14,-6],[-14,4],[-10,12],[-4,18],[6,20],[14,16],[18,8],[14,0]],
+    pts:[
+      [-20,-2],[-8,-2],[4,-2],           // pit straight
+      [12,-6],[18,-12],[22,-18],          // T1-T3
+      [20,-24],[12,-26],[4,-24],          // T4-T5
+      [-4,-20],[-10,-14],[-14,-6],        // T6-T8
+      [-14,4],[-10,12],[-4,18],           // T9-T11
+      [4,20],[10,18],[14,12],             // T12-T14 Foro Sol stadium
+      [12,6],[8,4],[4,4],[0,2]            // T15-T17 exit
+    ],
     camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
-    corners:[{t:0.08,label:'T1'},{t:0.30,label:'T5'},{t:0.50,label:'Stadium'},{t:0.82,label:'Peraltada'}] },
+    corners:[
+      {t:0.08,label:'1'},{t:0.22,label:'4'},{t:0.38,label:'6'},
+      {t:0.52,label:'9'},{t:0.65,label:'12'},{t:0.78,label:'15'},{t:0.90,label:'17'}
+    ] },
 
+  // ── R20  BRAZIL (Interlagos)  anti-clockwise, 15 corners ──
+  // Senna S (T1-T2) tight right-left, Ferradura hairpin, back section
   { id:'brazil', name:'Brazil', flag:'🇧🇷', round:'R20',
-    pts:[[16,-4],[6,-4],[-4,-4],[-10,-8],[-12,-14],[-8,-20],[0,-24],[8,-22],[14,-16],[18,-8],[16,0],[10,8],[4,14],[-4,16],[-10,12],[-14,6],[-12,0],[-4,-2],[6,-4]],
-    camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
-    corners:[{t:0.08,label:'Senna S'},{t:0.25,label:'Curva Sol'},{t:0.45,label:'Ferradura'},{t:0.62,label:'Juncao'}] },
+    pts:[
+      [14,-20],[14,-12],[14,-4],         // pit straight going north
+      // T1-T2 Senna S — very tight right-left
+      [16,2],[18,6],[18,10],[16,14],
+      // T3-T4 Descida do Lago
+      [10,18],[4,20],
+      [-2,22],[-8,20],                   // lake section
+      [-14,16],[-16,10],[-14,4],         // T7-T8 Ferradura hairpin
+      [-12,-2],[-8,-8],                  // T9-T10 Laranjinha
+      [-2,-14],[4,-18],[8,-20],[12,-20]  // T11-T15 return
+    ],
+    camTop:[0,60,0.01], camOrbit:{r:66,h:36}, startT:0.0,
+    corners:[
+      {t:0.08,label:'1'},{t:0.16,label:'2'},{t:0.30,label:'4'},
+      {t:0.48,label:'7'},{t:0.62,label:'9'},{t:0.75,label:'12'},{t:0.88,label:'15'}
+    ] },
 
+  // ── R21  LAS VEGAS (Strip)  17 corners — 3 long straights ──
   { id:'lasvegas', name:'Las Vegas', flag:'🇺🇸', round:'R21',
-    pts:[[-26,4],[-26,-6],[-26,-14],[-22,-20],[-16,-24],[-10,-22],[-2,-22],[8,-22],[18,-22],[24,-16],[22,-8],[16,0],[8,6],[2,10],[-6,10],[-14,8],[-20,6],[-24,4]],
-    camTop:[0,60,0.01], camOrbit:{r:66,h:38}, startT:0.0,
-    corners:[{t:0.15,label:'T1'},{t:0.40,label:'T5'},{t:0.62,label:'T11'},{t:0.80,label:'T14'}] },
+    pts:[
+      [-26,18],[-26,8],[-26,-2],[-26,-12],  // long pit straight
+      [-22,-18],[-16,-22],[-10,-22],[-4,-20],  // T1-T2 chicane at south
+      [2,-16],[8,-10],[12,-4],             // T3-T5 heading east
+      [12,4],[12,12],[12,20],              // T6-T8 second long straight north
+      [8,24],[4,22],[0,18],                // T9-T10 north chicane
+      [-4,14],[-8,10],[-12,10],            // T11-T13 heading west
+      [-16,10],[-20,10],[-22,14],[-24,18]  // T14-T17 return straight
+    ],
+    camTop:[0,62,0.01], camOrbit:{r:68,h:38}, startT:0.0,
+    corners:[
+      {t:0.10,label:'1'},{t:0.25,label:'4'},{t:0.40,label:'7'},
+      {t:0.55,label:'10'},{t:0.70,label:'13'},{t:0.85,label:'17'}
+    ] },
 
+  // ── R22  QATAR (Losail)  16 corners — fast flowing ──
   { id:'qatar', name:'Qatar', flag:'🇶🇦', round:'R22',
-    pts:[[-22,0],[-10,0],[2,0],[10,-6],[16,-12],[20,-18],[18,-24],[10,-26],[0,-24],[-8,-22],[-14,-16],[-18,-8],[-18,2],[-14,8],[-8,12],[-2,14],[6,10],[8,4]],
-    camTop:[0,56,0.01], camOrbit:{r:62,h:36}, startT:0.0,
-    corners:[{t:0.08,label:'T1'},{t:0.28,label:'T4'},{t:0.55,label:'T8'},{t:0.80,label:'T14'}] },
+    pts:[
+      [-22,0],[-12,0],[-2,0],[6,-2],     // pit straight
+      [12,-6],[16,-12],[18,-18],          // T1-T4 fast right entry
+      [16,-24],[8,-26],[0,-24],           // T5-T6
+      [-6,-20],[-10,-14],                 // T7-T8
+      [-12,-6],[-10,2],                   // T9-T10
+      [-6,8],[0,12],[6,14],               // T11-T13
+      [10,10],[12,4],[8,0],[2,-2]         // T14-T16
+    ],
+    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
+    corners:[
+      {t:0.08,label:'1'},{t:0.22,label:'4'},{t:0.38,label:'7'},
+      {t:0.54,label:'10'},{t:0.68,label:'13'},{t:0.82,label:'16'}
+    ] },
 
+  // ── R23  MADRID (IFEMA)  20 corners — new 2026 street circuit ──
   { id:'madrid', name:'Madrid', flag:'🇪🇸', round:'R23',
-    pts:[[-24,-2],[-12,-2],[0,-2],[8,-6],[14,-12],[18,-18],[16,-24],[8,-26],[0,-24],[-8,-20],[-14,-14],[-16,-6],[-14,2],[-8,8],[0,10],[8,8],[14,2],[12,-4],[6,-6],[-2,-4]],
+    pts:[
+      [-24,0],[-14,0],[-4,0],[6,0],      // pit straight
+      [12,-4],[16,-10],[18,-16],          // T1-T3
+      [16,-22],[8,-24],[0,-22],           // T4-T6
+      [-6,-18],[-10,-12],                 // T7-T8
+      [-12,-4],[-10,4],[-6,10],           // T9-T11
+      [0,14],[6,12],[10,8],[12,4],        // T12-T15
+      [10,-2],[6,-6],[2,-4],[0,0]         // T16-T20
+    ],
     camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
-    corners:[{t:0.08,label:'T1'},{t:0.28,label:'T4'},{t:0.50,label:'T7'},{t:0.65,label:'Stadium'}] },
+    corners:[
+      {t:0.08,label:'1'},{t:0.22,label:'4'},{t:0.38,label:'7'},
+      {t:0.52,label:'11'},{t:0.65,label:'14'},{t:0.78,label:'17'},{t:0.90,label:'20'}
+    ] },
 
+  // ── R24  ABU DHABI (Yas Marina)  21 corners — hotel underpass ──
   { id:'abudhabi', name:'Abu Dhabi', flag:'🇦🇪', round:'R24',
-    pts:[[-22,0],[-10,0],[0,0],[8,-4],[14,-10],[18,-16],[16,-22],[8,-26],[0,-28],[-8,-26],[-14,-20],[-18,-12],[-20,-4],[-18,4],[-14,10],[-8,14],[0,16],[8,14],[14,8],[12,2]],
-    camTop:[0,58,0.01], camOrbit:{r:64,h:36}, startT:0.0,
-    corners:[{t:0.06,label:'T1'},{t:0.28,label:'T4'},{t:0.50,label:'Marina'},{t:0.65,label:'Hotel'},{t:0.82,label:'T17'}] },
+    pts:[
+      [-22,0],[-12,0],[-2,0],[6,-2],     // pit straight
+      [12,-6],[16,-12],[18,-18],          // T1-T2
+      [16,-24],[10,-28],[4,-26],          // T3-T5 hotel underpass (Y dips)
+      [-2,-22],[-6,-16],[-8,-8],          // T6-T8 marina
+      [-8,0],[-6,8],[-2,12],[4,14],       // T9-T12 inner section
+      [10,16],[16,12],[18,6],[16,-2],     // T13-T16 outer marina loop
+      [10,-8],[4,-12],[0,-10],[-4,-6],[-6,0] // T17-T21 final sector
+    ],
+    elev:[
+      0,0,0,0,           0,0,0,          // pit + T1-T2
+      0,-1.5,-1.5,       -0.5,0,0,       // hotel underpass + resurface
+      0,0,0,0,           0,0,0,0,        // T9-T12 + T13-T16
+      0,0,0,0,0                          // T17-T21
+    ],
+    camTop:[0,60,0.01], camOrbit:{r:66,h:36}, startT:0.0,
+    corners:[
+      {t:0.06,label:'1'},{t:0.20,label:'5'},{t:0.32,label:'9'},
+      {t:0.48,label:'13'},{t:0.62,label:'16'},{t:0.78,label:'19'},{t:0.90,label:'21'}
+    ] },
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -517,18 +844,25 @@ function buildTrack(def) {
 
 function _makeTextSprite(text) {
   const canvas = document.createElement('canvas');
-  canvas.width = 180; canvas.height = 56;
+  canvas.width = 64; canvas.height = 64;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = 'rgba(0,0,0,0)';
-  ctx.fillRect(0, 0, 180, 56);
-  ctx.font = 'bold 18px sans-serif';
+  ctx.clearRect(0, 0, 64, 64);
+  ctx.fillStyle = 'rgba(0,0,0,0.78)';
+  ctx.beginPath();
+  ctx.arc(32, 32, 28, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.font = 'bold 22px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.fillText(text, 90, 36);
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.fillText(text, 32, 32);
   const tex = new THREE.CanvasTexture(canvas);
   const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
   const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(3.5, 1.1, 1);
+  sprite.scale.set(1.2, 1.2, 1);
   return sprite;
 }
 
@@ -800,12 +1134,18 @@ function showWelcome() {
   msgs.innerHTML = '';
   const w = document.createElement('div');
   w.className = 'welcome';
-  w.innerHTML = `<h2>🏎 F1 2026 SEASON PREDICTOR</h2>
+  w.innerHTML = `<button class="welcome-close" title="Dismiss">✕</button>
+    <h2>🏎 F1 2026 SEASON PREDICTOR</h2>
     <p>Season opens <strong>March 8 — Melbourne, Australia</strong>.<br>
     24 races · 11 teams · 22 drivers · Complete regulation reset.<br><br>
     New power units, active aero, two brand-new teams, and Lewis Hamilton in red.<br>
     Ask me anything — or pick a topic from the sidebar.</p>`;
   msgs.appendChild(w);
+  w.querySelector('.welcome-close').addEventListener('click', () => {
+    w.style.transition = 'opacity 0.3s';
+    w.style.opacity = '0';
+    setTimeout(() => { w.style.display = 'none'; }, 300);
+  });
 }
 
 function newChat() {
